@@ -15,4 +15,9 @@ class MedicoController extends Controller
     {
         return view('medico.historial');
     }
+
+    public function reserva()
+    {
+        return view('medico.reserva');
+    }
 }

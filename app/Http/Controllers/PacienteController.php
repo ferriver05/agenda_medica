@@ -10,4 +10,14 @@ class PacienteController extends Controller
     {
         return view('paciente.dashboard');
     }
+
+    public function historial()
+    {
+        return view('paciente.historial');
+    }
+
+    public function reserva()
+    {
+        return view('paciente.reserva');
+    }
 }

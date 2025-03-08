@@ -33,9 +33,14 @@ Route::get('/redirect-dashboard', function () {
     };
 })->middleware('auth')->name('redirect.dashboard');
 
+//------------- RUTAS POR DEFECTO ---------------//
 
+Route::get('/', function () {
+    return redirect()->route('login');
+});
 
-// RUTAS DEL BREEZE
+//------------- RUTAS AUTH (BREEZE) ---------------//
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -44,15 +49,21 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
-
-
-Route::get('/', function () {
-    return redirect()->route('login');
-});
+//------------- RUTAS PACIENTE ---------------//
 
 Route::middleware(['rol:Paciente'])->group(function () {
     Route::get('/paciente/dashboard', [PacienteController::class, 'dashboard'])->name('paciente.dashboard');
 });
+
+Route::middleware(['rol:Paciente'])->group(function () {
+    Route::get('/paciente/historial', [PacienteController::class, 'historial'])->name('paciente.historial');
+});
+
+Route::middleware(['rol:Paciente'])->group(function () {
+    Route::get('/paciente/reserva', [PacienteController::class, 'reserva'])->name('paciente.reserva');
+});
+
+//------------- RUTAS MEDICO ---------------//
 
 Route::middleware(['rol:Medico'])->group(function () {
     Route::get('/medico/dashboard', [MedicoController::class, 'dashboard'])->name('medico.dashboard');
@@ -61,6 +72,12 @@ Route::middleware(['rol:Medico'])->group(function () {
 Route::middleware(['rol:Medico'])->group(function () {
     Route::get('/medico/historial', [MedicoController::class, 'historial'])->name('medico.historial');
 });
+
+Route::middleware(['rol:Medico'])->group(function () {
+    Route::get('/medico/reserva', [MedicoController::class, 'reserva'])->name('medico.reserva');
+});
+
+//------------- RUTAS DBA ---------------//
 
 Route::middleware(['rol:DBA'])->group(function () {
     Route::get('/dba/dashboard', [DBAController::class, 'dashboard'])->name('dba.dashboard');

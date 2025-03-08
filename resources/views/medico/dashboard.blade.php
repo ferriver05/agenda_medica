@@ -15,7 +15,7 @@
 
     <!-- CONTENIDO -->
     <main class="py-16 px-4 text-center">
-        <h2 class="text-3xl font-semibold text-gray-800">Bienvenido a la Clínica Salud Plus</h2>
+        <h2 class="text-3xl font-semibold text-gray-800">Bienvenido de nuevo, {{ auth()->user()->name }}</h2>
         
         <!-- IMG CLINICA -->
         <div class="mt-8">

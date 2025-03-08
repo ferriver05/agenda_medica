@@ -17,7 +17,7 @@
     </style>
 </head>
     <!-- Diseño encabezado -->
-@extends('layouts.app2')
+@extends('layouts.app')
 @section('content')
 <body class="bg-gray-100 bg-opacity-90">
     <main>
