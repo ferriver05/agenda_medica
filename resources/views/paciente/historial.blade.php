@@ -1,98 +1,100 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Historial de Clínica de Pacientes</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
 @extends('layouts.app')
 @section('content')
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Buscar Historial de Pacientes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+</head>
 <body class="bg-gray-100">
-    <div class="max-w-6xl mx-auto my-5 p-5 bg-white shadow-md rounded-lg">
-        <div class="bg-blue-500 p-4 text-white text-xl font-bold flex items-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 11.25v-4.5m0 0V6m0 1.5h1.5M12 7.5H9m0 0V6m0 1.5h1.5M12 14.25a2.25 2.25 0 11-4.5 0" />
-            </svg>
-            Historial De Clínica De Pacientes
-        </div>
-        <div class="grid grid-cols-2 gap-4 p-4">
-            <div>
-                <label class="block text-gray-700">Nombre del Médico</label>
-                <input type="text" class="w-full p-2 border rounded" disabled>
-            </div>
-            <div>
-                <label class="block text-gray-700">Código de seguro social</label>
-                <input type="text" class="w-full p-2 border rounded" disabled>
-            </div>
-            <div>
-                <label class="block text-gray-700">Área del médico</label>
-                <input type="text" class="w-full p-2 border rounded" disabled>
-            </div>
-            <div>
-                <label class="block text-gray-700">Nombre completo</label>
-                <input type="text" class="w-full p-2 border rounded" disabled>
-            </div>
-            <div>
-                <label class="block text-gray-700">Día y Fecha de la cita</label>
-                <input type="date" class="w-full p-2 border rounded" disabled>
-            </div>
-            <div>
-                <label class="block text-gray-700">Edad</label>
-                <input type="number" class="w-full p-2 border rounded" disabled>
-            </div>
-            <div>
-                <label class="block text-gray-700">Estado de la cita</label>
-                <select class="w-full p-2 border rounded" disabled>
-                    <option>Confirmada</option>
-                    <option>Pendiente</option>
-                    <option>Cancelada</option>
-                </select>
-            </div>
-            <div>
-                <label class="block text-gray-700">DNI</label>
-                <input type="text" class="w-full p-2 border rounded" disabled>
-            </div>
-            <div>
-                <label class="block text-gray-700">Hora de la cita</label>
-                <input type="time" class="w-full p-2 border rounded" disabled>
-            </div>
-            <div>
-                <label class="block text-gray-700">Sexo</label>
-                <select class="w-full p-2 border rounded" disabled>
-                    <option>Masculino</option>
-                    <option>Femenino</option>
-                    <option>Otro</option>
-                </select>
-            </div>
-            <div>
-                <label class="block text-gray-700">Número de celular</label>
-                <input type="tel" class="w-full p-2 border rounded" disabled>
-            </div>
-            <div class="col-span-2">
-                <label class="block text-gray-700">Información de la cita y recomendaciones</label>
-                <textarea class="w-full p-2 border rounded h-24" disabled></textarea>
-            </div>
-            <div class="col-span-2">
-                <label class="block text-gray-700">Receta médica</label>
-                <input type="file" class="w-full p-2 border rounded bg-white" accept="image/*">
-            </div>
-            <div class="col-span-2">
-                <label class="block text-gray-700">Notas adicionales del médico</label>
-                <textarea class="w-full p-2 border rounded h-24" disabled></textarea>
-            </div>
-            <div class="col-span-2">
-                <label class="block text-gray-700">Siguiente cita recomendada</label>
-                <input type="date" class="w-full p-2 border rounded" disabled>
+    <main class="p-8 flex flex-col justify-center items-center min-h-screen">
+        <div class="bg-white p-6 rounded shadow-md max-w-4xl w-full">
+            <h2 class="text-2xl font-bold text-gray-700 mb-4">Buscar Historial de Pacientes</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label class="block text-gray-700" for="search-dni">Buscar por DNI</label>
+                    <input class="w-full p-2 border rounded" id="search-dni" type="text" placeholder="Ingrese DNI"/>
+                </div>
+                <div class="flex items-end">
+                    <button class="bg-blue-500 text-white px-4 py-2 rounded w-full">Buscar</button>
+                </div>
             </div>
         </div>
-        <div class="flex justify-center p-4">
-            <button class="bg-gray-400 text-white px-4 py-2 rounded">Cerrar</button>
+
+        <div class="bg-white p-6 rounded shadow-md max-w-4xl w-full mt-6">
+            <h2 class="text-2xl font-bold text-gray-700 mb-4">Datos del Paciente</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-gray-700">Nombre del Médico</label>
+                    <input class="w-full p-2 border rounded" type="text" readonly/>
+                </div>
+                <div>
+                    <label class="block text-gray-700">Área del médico</label>
+                    <input class="w-full p-2 border rounded" type="text" readonly/>
+                </div>
+                <div>
+                    <label class="block text-gray-700">Nombre completo</label>
+                    <input class="w-full p-2 border rounded" type="text" readonly/>
+                </div>
+                <div>
+                    <label class="block text-gray-700">Código de seguro social</label>
+                    <input class="w-full p-2 border rounded" type="text" readonly/>
+                </div>
+                <div>
+                    <label class="block text-gray-700">Edad</label>
+                    <input class="w-full p-2 border rounded" type="text" readonly/>
+                </div>
+                <div>
+                    <label class="block text-gray-700">DNI</label>
+                    <input class="w-full p-2 border rounded" type="text" readonly/>
+                </div>
+                <div>
+                    <label class="block text-gray-700">Sexo</label>
+                    <input class="w-full p-2 border rounded" type="text" readonly/>
+                </div>
+                <div>
+                    <label class="block text-gray-700">Número de celular</label>
+                    <input class="w-full p-2 border rounded" type="text" readonly/>
+                </div>
+                <div>
+                    <label class="block text-gray-700">Día y Fecha de la cita</label>
+                    <input class="w-full p-2 border rounded" type="text" readonly/>
+                </div>
+                <div>
+                    <label class="block text-gray-700">Hora de la cita</label>
+                    <input class="w-full p-2 border rounded" type="text" readonly/>
+                </div>
+                <div>
+                    <label class="block text-gray-700">Estado de la cita</label>
+                    <input class="w-full p-2 border rounded" type="text" readonly/>
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <label class="block text-gray-700">Información de lo que padece</label>
+                <textarea class="w-full p-2 border rounded h-24" readonly></textarea>
+            </div>
+            
+            <div class="mt-4">
+                <label class="block text-gray-700">Receta Médica</label>
+                <div class="w-full p-2 border rounded flex justify-center">
+                    <img id="receta-medica" src="ruta" alt="Receta Médica" class="max-w-xs rounded"/>
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <label class="block text-gray-700">Notas del Médico</label>
+                <textarea class="w-full p-2 border rounded h-24" readonly></textarea>
+            </div>
+            
+            <div class="flex justify-center mt-4">
+                <button class="bg-gray-300 text-gray-700 px-4 py-2 rounded mr-2">Cancelar</button>
+            </div>
         </div>
-    </div>
-    <footer class="bg-blue-500 text-white text-center p-2 mt-5">
-        Derechos reservados. Elaborado por Clase TI-206-CN USAP.
+    </main>
+    <footer class="bg-blue-500 text-white text-center p-4 mt-8">
+        <p>© Derechos reservados. Elaborado por Clase TI-206-CN USAP.</p>
     </footer>
-</body>
 @endsection
-</html>
