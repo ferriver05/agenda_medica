@@ -18,7 +18,7 @@
                     <input class="w-full p-2 border rounded" id="search-dni" type="text" placeholder="Ingrese DNI"/>
                 </div>
                 <div class="flex items-end">
-                    <button class="bg-blue-500 text-white px-4 py-2 rounded w-full">Buscar</button>
+                    <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded w-full">Buscar</button>
                 </div>
             </div>
         </div>
@@ -90,7 +90,7 @@
             </div>
             
             <div class="flex justify-center mt-4">
-                <button class="bg-gray-300 text-gray-700 px-4 py-2 rounded mr-2">Cancelar</button>
+                <button class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-4 py-2 rounded mr-2">Cancelar</button>
             </div>
         </div>
     </main>
