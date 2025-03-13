@@ -16,8 +16,6 @@ class Cita extends Model
         'medico_id',
         'fecha',
         'hora_inicio',
-        'hora_fin',
-        'estado_solicitud',
         'estado',
         'notas',
         'imagen_prescripcion',

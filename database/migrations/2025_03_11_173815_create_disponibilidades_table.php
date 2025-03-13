@@ -11,17 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('citas', function (Blueprint $table) {
+        Schema::create('disponibilidades', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('paciente_id')->constrained('pacientes')->onDelete('cascade');
             $table->foreignId('medico_id')->constrained('medicos')->onDelete('cascade');
-            $table->date('fecha');
+            $table->tinyInteger('dia_semana'); // 0 = Domingo... 6 = Sabado
             $table->time('hora_inicio');
             $table->time('hora_fin');
-            $table->enum('estado', ['pendiente', 'confirmada', 'cancelada', 'completada'])->default('pendiente');
-            $table->text('razon_paciente');
-            $table->text('notas_medico')->nullable();
-            $table->text('imagen_prescripcion')->nullable();
             $table->timestamps();
         });
     }
@@ -31,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('citas');
+        Schema::dropIfExists('disponibilidades');
     }
 };

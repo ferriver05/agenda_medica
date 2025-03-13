@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PacienteController;
 use App\Http\Controllers\MedicoController;
 use App\Http\Controllers\DBAController;
+use App\Http\Controllers\CitaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,9 +60,9 @@ Route::middleware(['rol:Paciente'])->group(function () {
     Route::get('/paciente/historial', [PacienteController::class, 'historial'])->name('paciente.historial');
 });
 
-Route::middleware(['rol:Paciente'])->group(function () {
-    Route::get('/paciente/reserva', [PacienteController::class, 'reserva'])->name('paciente.reserva');
-});
+// Route::middleware(['rol:Paciente'])->group(function () {
+//     Route::get('/paciente/reserva', [PacienteController::class, 'reserva'])->name('paciente.reserva');
+// });
 
 //------------- RUTAS MEDICO ---------------//
 
@@ -82,3 +83,14 @@ Route::middleware(['rol:Medico'])->group(function () {
 Route::middleware(['rol:DBA'])->group(function () {
     Route::get('/dba/dashboard', [DBAController::class, 'dashboard'])->name('dba.dashboard');
 });
+
+//-------------- RUTAS PACIENTE.RESERVA -------------//
+Route::middleware(['rol:Paciente'])->group(function () {
+    Route::get('/paciente/reservar', [CitaController::class, 'mostrarFormularioReserva'])->name('paciente.reservar');
+});
+
+Route::get('/medicos-por-especialidad/{especialidad_id}', [CitaController::class, 'obtenerMedicosPorEspecialidad'])->name('medicos.por.especialidad');
+
+Route::get('/horas-disponibles/{medico_id}/{fecha}', [CitaController::class, 'obtenerHorasDisponibles'])->name('horas.disponibles');
+
+Route::post('/procesar-reserva', [CitaController::class, 'store'])->name('procesar.reserva');

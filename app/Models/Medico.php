@@ -38,4 +38,10 @@ class Medico extends Model
     {
         return $this->hasMany(Cita::class);
     }
+
+    // Relacion 1 a 1 con Medico
+    public function sala()
+    {
+        return $this->belongsTo(Sala::class);
+    }
 }

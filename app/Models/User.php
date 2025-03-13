@@ -50,4 +50,14 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function paciente()
+    {
+        return $this->hasOne(Paciente::class, 'user_id');
+    }
+
+    public function medico()
+    {
+        return $this->hasOne(Medico::class, 'user_id');
+    }
 }

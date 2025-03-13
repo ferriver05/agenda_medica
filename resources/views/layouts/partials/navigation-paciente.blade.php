@@ -18,7 +18,7 @@
                     <x-nav-link :href="route('paciente.historial')" :active="request()->routeIs('paciente.historial')" class="text-white">
                         {{ __('Historial') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('paciente.reserva')" :active="request()->routeIs('paciente.reserva')" class="text-white">
+                    <x-nav-link :href="route('paciente.reservar')" :active="request()->routeIs('paciente.reservar')" class="text-white">
                         {{ __('Reservar') }}
                     </x-nav-link>
                 </div>
@@ -79,7 +79,7 @@
             <x-responsive-nav-link :href="route('paciente.historial')" :active="request()->routeIs('paciente.historial')">
                 {{ __('Historial') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('paciente.reserva')" :active="request()->routeIs('paciente.reserva')">
+            <x-responsive-nav-link :href="route('paciente.reservar')" :active="request()->routeIs('paciente.reservar')">
                 {{ __('Reservar') }}
             </x-responsive-nav-link>
         </div>
