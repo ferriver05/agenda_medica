@@ -32,4 +32,10 @@ class Cita extends Model
     {
         return $this->belongsTo(Medico::class, 'medico_id');
     }
+
+    // Relacion M a 1 con Especialidad
+    public function especialidad()
+    {
+        return $this->belongsTo(Especialidad::class);
+    }
 }

@@ -15,10 +15,10 @@
                     <x-nav-link :href="route('paciente.dashboard')" :active="request()->routeIs('paciente.dashboard')" class="text-white">
                         {{ __('Dashboard') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('paciente.historial')" :active="request()->routeIs('paciente.historial')" class="text-white">
-                        {{ __('Historial') }}
+                    <x-nav-link :href="route('paciente.citas.resumen')" :active="request()->routeIs('paciente.citas.resumen')" class="text-white">
+                        {{ __('Mis Citas') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('paciente.reservar')" :active="request()->routeIs('paciente.reservar')" class="text-white">
+                    <x-nav-link :href="route('paciente.citas.reservar')" :active="request()->routeIs('paciente.citas.reservar')" class="text-white">
                         {{ __('Reservar') }}
                     </x-nav-link>
                 </div>
@@ -76,10 +76,10 @@
             <x-responsive-nav-link :href="route('paciente.dashboard')" :active="request()->routeIs('paciente.dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('paciente.historial')" :active="request()->routeIs('paciente.historial')">
-                {{ __('Historial') }}
+            <x-responsive-nav-link :href="route('paciente.citas.resumen')" :active="request()->routeIs('paciente.citas.resumen')">
+                {{ __('Mis Citas') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('paciente.reservar')" :active="request()->routeIs('paciente.reservar')">
+            <x-responsive-nav-link :href="route('paciente.citas.reservar')" :active="request()->routeIs('paciente.citas. reservar')">
                 {{ __('Reservar') }}
             </x-responsive-nav-link>
         </div>

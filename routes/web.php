@@ -50,7 +50,7 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 
-//------------- RUTAS PACIENTE ---------------//
+//------------- 1. RUTAS PACIENTE ---------------//
 
 Route::middleware(['rol:Paciente'])->group(function () {
     Route::get('/paciente/dashboard', [PacienteController::class, 'dashboard'])->name('paciente.dashboard');
@@ -60,11 +60,29 @@ Route::middleware(['rol:Paciente'])->group(function () {
     Route::get('/paciente/historial', [PacienteController::class, 'historial'])->name('paciente.historial');
 });
 
-// Route::middleware(['rol:Paciente'])->group(function () {
-//     Route::get('/paciente/reserva', [PacienteController::class, 'reserva'])->name('paciente.reserva');
-// });
+//--------------- 1.1 RESERVAR ---------------------//
+Route::middleware(['rol:Paciente'])->group(function () {
+    Route::get('/paciente/citas/reservar', [CitaController::class, 'mostrarFormularioReserva'])->name('paciente.citas.reservar');
+});
 
-//------------- RUTAS MEDICO ---------------//
+Route::get('/medicos-por-especialidad/{especialidad_id}', [CitaController::class, 'obtenerMedicosPorEspecialidad'])->name('medicos.por.especialidad');
+
+Route::get('/horas-disponibles/{medico_id}/{fecha}', [CitaController::class, 'obtenerHorasDisponibles'])->name('horas.disponibles');
+
+Route::post('/procesar-reserva', [CitaController::class, 'store'])->name('procesar.reserva');
+
+//----------------1.2 RESUMEN--------------------//
+Route::get('/paciente/citas', [CitaController::class, 'mostrarResumen'])->name('paciente.citas.resumen');
+
+Route::middleware(['auth', 'rol:Paciente'])->group(function () {
+    Route::put('/citas/{id}/cancelar', [CitaController::class, 'cancelarCita'])->name('citas.cancelar');
+});
+
+//----------------1.3 DETALLES-------------------//
+Route::get('paciente/citas/{id}', [CitaController::class, 'mostrarDetalles'])->name('paciente.citas.detalles');
+
+
+// 2. ------------- RUTAS MEDICO ---------------//
 
 Route::middleware(['rol:Medico'])->group(function () {
     Route::get('/medico/dashboard', [MedicoController::class, 'dashboard'])->name('medico.dashboard');
@@ -83,14 +101,3 @@ Route::middleware(['rol:Medico'])->group(function () {
 Route::middleware(['rol:DBA'])->group(function () {
     Route::get('/dba/dashboard', [DBAController::class, 'dashboard'])->name('dba.dashboard');
 });
-
-//-------------- RUTAS PACIENTE.RESERVA -------------//
-Route::middleware(['rol:Paciente'])->group(function () {
-    Route::get('/paciente/reservar', [CitaController::class, 'mostrarFormularioReserva'])->name('paciente.reservar');
-});
-
-Route::get('/medicos-por-especialidad/{especialidad_id}', [CitaController::class, 'obtenerMedicosPorEspecialidad'])->name('medicos.por.especialidad');
-
-Route::get('/horas-disponibles/{medico_id}/{fecha}', [CitaController::class, 'obtenerHorasDisponibles'])->name('horas.disponibles');
-
-Route::post('/procesar-reserva', [CitaController::class, 'store'])->name('procesar.reserva');
