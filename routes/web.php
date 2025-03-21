@@ -6,6 +6,8 @@ use App\Http\Controllers\PacienteController;
 use App\Http\Controllers\MedicoController;
 use App\Http\Controllers\DBAController;
 use App\Http\Controllers\CitaController;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Response;
 
 /*
 |--------------------------------------------------------------------------
@@ -62,7 +64,7 @@ Route::middleware(['rol:Paciente'])->group(function () {
 
 //--------------- 1.1 RESERVAR ---------------------//
 Route::middleware(['rol:Paciente'])->group(function () {
-    Route::get('/paciente/citas/reservar', [CitaController::class, 'mostrarFormularioReserva'])->name('paciente.citas.reservar');
+    Route::get('/paciente/citas/reservar', [CitaController::class, 'mostrarFormularioReservaPaciente'])->name('paciente.citas.reservar');
 });
 
 Route::get('/medicos-por-especialidad/{especialidad_id}', [CitaController::class, 'obtenerMedicosPorEspecialidad'])->name('medicos.por.especialidad');
@@ -72,15 +74,14 @@ Route::get('/horas-disponibles/{medico_id}/{fecha}', [CitaController::class, 'ob
 Route::post('/procesar-reserva', [CitaController::class, 'store'])->name('procesar.reserva');
 
 //----------------1.2 RESUMEN--------------------//
-Route::get('/paciente/citas', [CitaController::class, 'mostrarResumen'])->name('paciente.citas.resumen');
-
-Route::middleware(['auth', 'rol:Paciente'])->group(function () {
-    Route::put('/citas/{id}/cancelar', [CitaController::class, 'cancelarCita'])->name('citas.cancelar');
-});
+Route::get('/paciente/citas', [CitaController::class, 'mostrarResumenPaciente'])->name('paciente.citas.resumen');
 
 //----------------1.3 DETALLES-------------------//
 Route::get('paciente/citas/{id}', [CitaController::class, 'mostrarDetalles'])->name('paciente.citas.detalles');
 
+Route::middleware(['auth', 'rol:Paciente'])->group(function () {
+    Route::put('/citas/{id}/cancelar', [CitaController::class, 'cancelarCita'])->name('citas.cancelar');
+});
 
 // 2. ------------- RUTAS MEDICO ---------------//
 
@@ -95,6 +96,42 @@ Route::middleware(['rol:Medico'])->group(function () {
 Route::middleware(['rol:Medico'])->group(function () {
     Route::get('/medico/reserva', [MedicoController::class, 'reserva'])->name('medico.reserva');
 });
+
+// -----------------2.1 RESERVAR --------------//
+Route::get('/medico/citas/reservar', [CitaController::class, 'mostrarFormularioReservaMedico'])->name('medico.citas.reservar');
+Route::get('/buscar-paciente-por-dni/{dni}', [CitaController::class, 'buscarPacientePorDni'])->name('buscar.paciente.por.dni');
+Route::get('/horas-disponibles-medico/{dni}/{fecha}', [CitaController::class, 'obtenerHorasDisponiblesMedico'])->name('horas.disponibles.medico');
+Route::post('/medico/procesar-reserva', [CitaController::class, 'procesarReservaMedico'])->name('medico.procesar.reserva');
+
+// --------------- 2.2 RESUMEN ----------------//
+Route::get('/medico/citas', [CitaController::class, 'mostrarResumenMedico'])->name('medico.citas.resumen');
+
+
+// ----------------2.3 DETALLES ---------------//
+Route::get('/medico/citas/{id}', [CitaController::class, 'mostrarDetalles'])->name('medico.citas.detalles');
+
+Route::put('/medico/citas/{id}/confirmar', [CitaController::class, 'confirmarCita'])->name('medico.citas.confirmar');
+Route::put('/medico/citas/{id}/rechazar', [CitaController::class, 'rechazarCita'])->name('medico.citas.rechazar');
+Route::put('/medico/citas/{id}/completar', [CitaController::class, 'completarCita'])->name('medico.citas.completar');
+
+// Ruta para servir imágenes de prescripciones
+Route::get('/prescripciones/{filename}', function ($filename) {
+    $path = storage_path('app/prescripciones/' . $filename);
+
+    if (!file_exists($path)) {
+        abort(404);
+    }
+
+    // Verificar que el usuario está autenticado
+    if (!auth()->check()) {
+        abort(403, 'No tienes permiso para ver esta imagen.');
+    }
+
+    $file = file_get_contents($path);
+    $type = mime_content_type($path);
+
+    return Response::make($file, 200)->header('Content-Type', $type);
+})->name('prescripciones.ver');
 
 //------------- RUTAS DBA ---------------//
 
