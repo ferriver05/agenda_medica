@@ -14,6 +14,7 @@ class Medico extends Model
     protected $fillable = [
         'user_id',
         'numero_licencia',
+        'numero_sala'
     ];
 
     protected $hidden = [
@@ -37,11 +38,5 @@ class Medico extends Model
     public function citas()
     {
         return $this->hasMany(Cita::class);
-    }
-
-    // Relacion 1 a 1 con Medico
-    public function sala()
-    {
-        return $this->belongsTo(Sala::class);
     }
 }

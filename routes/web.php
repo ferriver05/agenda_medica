@@ -6,6 +6,7 @@ use App\Http\Controllers\PacienteController;
 use App\Http\Controllers\MedicoController;
 use App\Http\Controllers\DBAController;
 use App\Http\Controllers\CitaController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Response;
 
@@ -114,7 +115,7 @@ Route::put('/medico/citas/{id}/confirmar', [CitaController::class, 'confirmarCit
 Route::put('/medico/citas/{id}/rechazar', [CitaController::class, 'rechazarCita'])->name('medico.citas.rechazar');
 Route::put('/medico/citas/{id}/completar', [CitaController::class, 'completarCita'])->name('medico.citas.completar');
 
-// Ruta para servir imágenes de prescripciones
+// Ruta para mostrar imagenes de prescripciones
 Route::get('/prescripciones/{filename}', function ($filename) {
     $path = storage_path('app/prescripciones/' . $filename);
 
@@ -122,7 +123,6 @@ Route::get('/prescripciones/{filename}', function ($filename) {
         abort(404);
     }
 
-    // Verificar que el usuario está autenticado
     if (!auth()->check()) {
         abort(403, 'No tienes permiso para ver esta imagen.');
     }
@@ -138,3 +138,9 @@ Route::get('/prescripciones/{filename}', function ($filename) {
 Route::middleware(['rol:DBA'])->group(function () {
     Route::get('/dba/dashboard', [DBAController::class, 'dashboard'])->name('dba.dashboard');
 });
+
+// ------------- 1.1 USUARIOS -----------------//
+Route::get('/dba/usuarios', [UserController::class, 'index'])->name('dba.usuarios.resumen');
+Route::get('/dba/usuarios/crear', [UserController::class, 'create'])->name('dba.usuarios.create');
+Route::post('/crear-usuario', [UserController::class, 'store'])->name('dba.usuarios.store');
+

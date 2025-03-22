@@ -9,7 +9,7 @@ class Historial extends Model
 {
     use HasFactory;
 
-    protected $table = 'historial';
+    protected $table = 'historiales';
 
     protected $fillable = [
         'paciente_id',

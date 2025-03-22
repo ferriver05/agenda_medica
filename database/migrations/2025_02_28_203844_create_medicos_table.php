@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('numero_licencia')->unique();
-            $table->foreignId('sala_id')->nullable()->constrained('salas')->onDelete('set null');
+            $table->string('numero_sala')->unique();
             $table->timestamps();
         });
     }

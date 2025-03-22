@@ -10,4 +10,9 @@ class DBAController extends Controller
     {
         return view('dba.dashboard');
     }
+
+    public function resumenUsuarios()
+    {
+        return view('dba.usuarios.resumen');
+    }
 }

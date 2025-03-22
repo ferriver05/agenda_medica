@@ -43,7 +43,6 @@
                 @endif
             </div>
 
-            <!-- Acciones del médico -->
             <div class="mt-6">
                 @if ($cita->estado === 'pendiente')
                     <div class="flex flex-wrap gap-4">
@@ -97,7 +96,6 @@
                     </div>
                 @endif
 
-                <!-- Botón para regresar -->
                 <div class="mt-6">
                     <a href="{{ route('medico.citas.resumen') }}"
                         class="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700">

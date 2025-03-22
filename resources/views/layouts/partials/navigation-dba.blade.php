@@ -15,6 +15,9 @@
                     <x-nav-link :href="route('dba.dashboard')" :active="request()->routeIs('dba.dashboard')" class="text-white">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('dba.usuarios.resumen')" :active="request()->routeIs('dba.usuarios.resumen')" class="text-white">
+                        {{ __('Usuarios') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -69,6 +72,9 @@
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dba.dashboard')" :active="request()->routeIs('dba.dashboard')">
                 {{ __('Dashboard') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('dba.usuarios.resumen')" :active="request()->routeIs('dba.usuarios.resumen')">
+                {{ __('Usuarios') }}
             </x-responsive-nav-link>
         </div>
 

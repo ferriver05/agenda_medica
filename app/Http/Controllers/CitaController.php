@@ -31,21 +31,20 @@ class CitaController extends Controller
 
     public function obtenerHorasDisponibles($medico_id, $fecha)
     {
-        $diaSemana = date('w', strtotime($fecha)); // 0 (Domingo) a 6 (Sábado)
+        $diaSemana = date('w', strtotime($fecha));
     
-        // Obtener disponibilidades del médico
+
         $disponibilidades = Disponibilidad::where('medico_id', $medico_id)
             ->where('dia_semana', $diaSemana)
             ->get();
     
-        // Obtener horas ocupadas del médico (excluyendo citas canceladas)
+
         $horasOcupadas = Cita::where('medico_id', $medico_id)
             ->where('fecha', $fecha)
-            ->whereNotIn('estado', ['cancelada']) // Excluir citas canceladas
+            ->whereNotIn('estado', ['cancelada'])
             ->pluck('hora_inicio')
             ->toArray();
     
-        // Generar horas disponibles
         $horasDisponibles = [];
         foreach ($disponibilidades as $disponibilidad) {
             $horaInicio = strtotime($disponibilidad->hora_inicio);
@@ -285,29 +284,24 @@ class CitaController extends Controller
         $medicoId = auth()->user()->medico->id;
         $diaSemana = date('w', strtotime($fecha));
     
-        // Obtener disponibilidades del médico
         $disponibilidades = Disponibilidad::where('medico_id', $medicoId)
             ->where('dia_semana', $diaSemana)
             ->get();
     
-        // Obtener horas ocupadas del médico (excluyendo citas canceladas)
         $horasOcupadasMedico = Cita::where('medico_id', $medicoId)
             ->where('fecha', $fecha)
-            ->whereNotIn('estado', ['cancelada']) // Excluir citas canceladas
+            ->whereNotIn('estado', ['cancelada'])
             ->pluck('hora_inicio')
             ->toArray();
     
-        // Obtener horas ocupadas del paciente (excluyendo citas canceladas)
         $horasOcupadasPaciente = Cita::where('paciente_id', $paciente->paciente->id)
             ->where('fecha', $fecha)
-            ->whereNotIn('estado', ['cancelada']) // Excluir citas canceladas
+            ->whereNotIn('estado', ['cancelada'])
             ->pluck('hora_inicio')
             ->toArray();
     
-        // Combinar horas ocupadas
         $horasOcupadas = array_merge($horasOcupadasMedico, $horasOcupadasPaciente);
     
-        // Generar horas disponibles
         $horasDisponibles = [];
         foreach ($disponibilidades as $disponibilidad) {
             $horaInicio = strtotime($disponibilidad->hora_inicio);
