@@ -21,6 +21,9 @@
                     <x-nav-link :href="route('medico.citas.reservar')" :active="request()->routeIs('medico.citas.reservar')" class="text-white">
                         {{ __('Reservar') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('medico.pacientes')" :active="request()->routeIs('medico.pacientes')" class="text-white">
+                        {{ __('Pacientes') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -81,6 +84,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('medico.citas.reservar')" :active="request()->routeIs('medico.citas.reservar')">
                 {{ __('Reservar') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('medico.pacientes')" :active="request()->routeIs('medico.pacientes')">
+                {{ __('Pacientes') }}
             </x-responsive-nav-link>
         </div>
 

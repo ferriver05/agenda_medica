@@ -11,13 +11,8 @@ class MedicoController extends Controller
         return view('medico.dashboard');
     }
 
-    public function historial()
+    public function pacientes()
     {
-        return view('medico.historial');
-    }
-
-    public function reserva()
-    {
-        return view('medico.reserva');
+        return view('medico.pacientes');
     }
 }

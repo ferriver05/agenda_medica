@@ -60,7 +60,7 @@ Route::middleware(['rol:Paciente'])->group(function () {
 });
 
 Route::middleware(['rol:Paciente'])->group(function () {
-    Route::get('/paciente/historial', [PacienteController::class, 'historial'])->name('paciente.historial');
+    Route::get('/paciente/antecedentes', [PacienteController::class, 'antecedentes'])->name('paciente.antecedentes');
 });
 
 //--------------- 1.1 RESERVAR ---------------------//
@@ -91,11 +91,7 @@ Route::middleware(['rol:Medico'])->group(function () {
 });
 
 Route::middleware(['rol:Medico'])->group(function () {
-    Route::get('/medico/historial', [MedicoController::class, 'historial'])->name('medico.historial');
-});
-
-Route::middleware(['rol:Medico'])->group(function () {
-    Route::get('/medico/reserva', [MedicoController::class, 'reserva'])->name('medico.reserva');
+    Route::get('/medico/pacientes', [MedicoController::class, 'pacientes'])->name('medico.pacientes');
 });
 
 // -----------------2.1 RESERVAR --------------//

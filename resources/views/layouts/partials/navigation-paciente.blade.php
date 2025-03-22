@@ -21,6 +21,9 @@
                     <x-nav-link :href="route('paciente.citas.reservar')" :active="request()->routeIs('paciente.citas.reservar')" class="text-white">
                         {{ __('Reservar') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('paciente.antecedentes')" :active="request()->routeIs('paciente.antecedentes')" class="text-white">
+                        {{ __('Antecedentes') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -79,8 +82,11 @@
             <x-responsive-nav-link :href="route('paciente.citas.resumen')" :active="request()->routeIs('paciente.citas.resumen')">
                 {{ __('Mis Citas') }}
             </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('paciente.citas.reservar')" :active="request()->routeIs('paciente.citas. reservar')">
+            <x-responsive-nav-link :href="route('paciente.citas.reservar')" :active="request()->routeIs('paciente.citas.reservar')">
                 {{ __('Reservar') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('paciente.antecedentes')" :active="request()->routeIs('paciente.antecedentes')">
+                {{ __('Antecedentes') }}
             </x-responsive-nav-link>
         </div>
 
