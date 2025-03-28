@@ -18,6 +18,12 @@ class Disponibilidad extends Model
         'hora_fin',
     ];
 
+    // Usado para el metodo show en UserController
+    protected $casts = [
+        'hora_inicio' => 'datetime:H:i',
+        'hora_fin' => 'datetime:H:i',
+    ];
+
     public function medico()
     {
         return $this->belongsTo(User::class, 'medico_id');

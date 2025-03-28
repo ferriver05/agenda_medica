@@ -19,7 +19,6 @@ return new class extends Migration
             $table->string('telefono', 20)->nullable();
             $table->string('direccion')->nullable();
             $table->string('email')->unique();
-            $table->text('foto')->nullable();
             $table->enum('genero', ['masculino', 'femenino', 'otro'])->nullable();
             $table->enum('rol', ['DBA', 'Medico', 'Paciente'])->default('Paciente');
             $table->boolean('activo')->default(true);

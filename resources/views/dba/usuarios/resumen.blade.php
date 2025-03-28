@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mx-auto p-4">
+<div class="container mx-auto p-4 max-w-7xl">
 
     <div class="bg-white p-6 rounded-lg shadow-md mb-8">
         <div class="flex flex-col sm:flex-row gap-4">
@@ -58,10 +58,10 @@
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $usuario->created_at->format('d/m/Y') }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm">
-                        <a href="#" class="px-2 py-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 transition duration-200">
+                        <a href="{{ route('dba.usuarios.show', $usuario->id) }}" class="px-2 py-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 transition duration-200">
                             Ver
                         </a>
-                        <a href="#" class="px-2 py-1 bg-yellow-100 text-yellow-600 rounded hover:bg-yellow-200 transition duration-200 ml-2">
+                        <a href="{{ route('dba.usuarios.edit', $usuario->id) }}" class="px-2 py-1 bg-yellow-100 text-yellow-600 rounded hover:bg-yellow-200 transition duration-200 ml-2">
                             Editar
                         </a>
                     </td>

@@ -39,4 +39,12 @@ class Medico extends Model
     {
         return $this->hasMany(Cita::class);
     }
+
+    // Relacion 1 a M con Disponibilidades
+    public function disponibilidades()
+    {
+        return $this->hasMany(Disponibilidad::class);
+    }
+
+    
 }
