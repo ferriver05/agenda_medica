@@ -12,7 +12,18 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->call(function () {
+            Cita::where('estado', 'confirmada')
+                ->whereDate('fecha', '<', now()->toDateString())
+                ->orWhere(function($query) {
+                    $query->whereDate('fecha', now()->toDateString())
+                          ->whereTime('hora_fin', '<', now()->toTimeString());
+                })
+                ->update([
+                    'estado' => 'completada',
+                    'notas_medico' => DB::raw('COALESCE(CONCAT(notas_medico, "\n[Cita completada automáticamente por sistema]"), "[Cita completada automáticamente por sistema]")')
+                ]);
+        })->dailyAt('23:59');
     }
 
     /**
