@@ -7,9 +7,10 @@ use App\Models\Medico;
 use App\Models\Paciente;
 use App\Models\Historial;
 use App\Models\Especialidad;
-use App\Models\Disponibilidad;
+use App\Models\Disponibilidad;  
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -41,9 +42,9 @@ class UserController extends Controller
     
         if ($request->rol === 'Paciente') {
             $request->validate([
-                'tipo_sangre' => 'required|string|max:3',
-                'seguro_medico' => 'required|string|max:255',
-                'ocupacion' => 'required|string|max:255',
+                'tipo_sangre' => 'nullable|string|max:3',
+                'seguro_medico' => 'nullable|string|max:255',
+                'ocupacion' => 'nullable|string|max:255',
                 'contacto_emergencia' => 'required|string|max:255',
                 'telefono_emergencia' => 'required|string|max:20',
                 'enfermedades_cronicas' => 'nullable|string|max:255',
@@ -279,18 +280,20 @@ class UserController extends Controller
     
     protected function updateMedicoData(Request $request, User $usuario)
     {
-        DB::transaction(function () use ($request, $usuario) {
-            // Validar datos específicos de médico
-            $medicoData = $request->validate([
-                'numero_licencia' => 'required|string|max:50|unique:medicos,numero_licencia,'.$usuario->medico->id,
-                'numero_sala' => 'required|string|max:20|unique:medicos,numero_sala,'.$usuario->medico->id,
-                'especialidades' => 'required|array|min:1',
-                'especialidades.*' => 'exists:especialidades,id',
-                'disponibilidades' => 'required|array|min:1',
-                'disponibilidades.*.dia_semana' => 'required|integer|between:0,6',
-                'disponibilidades.*.hora_inicio' => 'required|date_format:H:i',
-                'disponibilidades.*.hora_fin' => 'required|date_format:H:i|after:disponibilidades.*.hora_inicio'
-            ]);
+        // Validar datos específicos de médico
+        $medicoData = $request->validate([
+            'numero_licencia' => 'required|string|max:50|unique:medicos,numero_licencia,'.$usuario->medico->id,
+            'numero_sala' => 'required|string|max:20|unique:medicos,numero_sala,'.$usuario->medico->id,
+            'especialidades' => 'required|array|min:1',
+            'especialidades.*' => 'exists:especialidades,id',
+            'disponibilidades' => 'required|array|min:1',
+            'disponibilidades.*.dia_semana' => 'required|integer|between:0,6',
+            'disponibilidades.*.hora_inicio' => 'required|date_format:H:i',
+            'disponibilidades.*.hora_fin' => 'required|date_format:H:i|after:disponibilidades.*.hora_inicio'
+        ]);
+        
+        try {
+            DB::beginTransaction();
             
             // Actualizar datos básicos del médico
             $usuario->medico->update([
@@ -312,6 +315,13 @@ class UserController extends Controller
                     'activo' => true
                 ]);
             }
-        });
+            
+            DB::commit();
+            
+            return redirect()->back()->with('success', 'Datos del médico actualizados correctamente');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Error al actualizar los datos del médico: '.$e->getMessage());
+        }
     }
 }

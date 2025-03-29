@@ -59,9 +59,7 @@ Route::middleware(['rol:Paciente'])->group(function () {
     Route::get('/paciente/dashboard', [PacienteController::class, 'dashboard'])->name('paciente.dashboard');
 });
 
-Route::middleware(['rol:Paciente'])->group(function () {
-    Route::get('/paciente/antecedentes', [PacienteController::class, 'antecedentes'])->name('paciente.antecedentes');
-});
+Route::get('/paciente/informacion', [PacienteController::class, 'mostrarInformacion'])->name('paciente.informacion');
 
 //--------------- 1.1 RESERVAR ---------------------//
 Route::middleware(['rol:Paciente'])->group(function () {
@@ -90,9 +88,8 @@ Route::middleware(['rol:Medico'])->group(function () {
     Route::get('/medico/dashboard', [MedicoController::class, 'dashboard'])->name('medico.dashboard');
 });
 
-Route::middleware(['rol:Medico'])->group(function () {
-    Route::get('/medico/pacientes', [MedicoController::class, 'pacientes'])->name('medico.pacientes');
-});
+Route::get('/medico/pacientes', [MedicoController::class, 'pacientes'])->name('medico.pacientes.resumen');
+Route::get('/medico/pacientes/{paciente}', [MedicoController::class, 'showPaciente'])->name('medico.pacientes.detalles');
 
 // -----------------2.1 RESERVAR --------------//
 Route::get('/medico/citas/reservar', [CitaController::class, 'mostrarFormularioReservaMedico'])->name('medico.citas.reservar');
@@ -137,11 +134,11 @@ Route::middleware(['rol:DBA'])->group(function () {
 
 // ------------- 1.1 USUARIOS -----------------//
 Route::get('/dba/usuarios', [UserController::class, 'index'])->name('dba.usuarios.resumen');
+Route::get('/dba/usuarios/create', [UserController::class, 'create'])->name('dba.usuarios.create');
 Route::get('/dba/usuarios/{usuario}', [UserController::class, 'show'])->name('dba.usuarios.show');
-Route::get('/dba/usuarios/crear', [UserController::class, 'create'])->name('dba.usuarios.create');
 Route::post('/crear-usuario', [UserController::class, 'store'])->name('dba.usuarios.store');
 Route::get('/dba/usuarios/{usuario}/editar', [UserController::class, 'edit'])->name('dba.usuarios.edit');
-Route::put('/usuarios/{usuario}', [UserController::class, 'update'])->name('dba.usuarios.update');
+Route::put('/update-usuario/{usuario}', [UserController::class, 'update'])->name('dba.usuarios.update');
 
 
 

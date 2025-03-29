@@ -1,7 +1,6 @@
 <h2 class="text-xl font-semibold mt-6 mb-4">Datos Médicos</h2>
 
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-    <!-- Número de licencia -->
     <div class="mb-4">
         <label for="numero_licencia" class="block text-sm font-medium text-gray-700">Número de Licencia</label>
         <input type="text" name="numero_licencia" id="numero_licencia" 
@@ -12,7 +11,6 @@
         @enderror
     </div>
 
-    <!-- Número de sala -->
     <div class="mb-4">
         <label for="numero_sala" class="block text-sm font-medium text-gray-700">Número de Sala</label>
         <input type="text" name="numero_sala" id="numero_sala" 
@@ -24,7 +22,6 @@
     </div>
 </div>
 
-<!-- Especialidades -->
 <div class="mt-4">
     <label for="especialidades" class="block text-sm font-medium text-gray-700">Especialidades</label>
     <select name="especialidades[]" id="especialidades" multiple
@@ -41,102 +38,100 @@
     @enderror
 </div>
 
-<!-- Horario de atención (disponibilidades) -->
-<div class="mt-6" id="disponibilidades-container">
-    <h3 class="text-lg font-semibold mb-2">Horario de Atención</h3>
-    
-    @foreach(old('disponibilidades', $medico->disponibilidades) as $index => $disponibilidad)
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 disponibilidad-item">
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Día</label>
-                <select name="disponibilidades[{{ $index }}][dia_semana]" 
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                    @foreach($diasSemana as $key => $dia)
-                        <option value="{{ $key }}" 
-                            {{ (is_array($disponibilidad) ? $disponibilidad['dia_semana'] : $disponibilidad->dia_semana) == $key ? 'selected' : '' }}>
-                            {{ $dia }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
+<div class="flex justify-center mt-6">
+    <div class="w-full md:w-1/2">
+        <div id="disponibilidades" class="mb-4">
+            <h2 class="text-xl font-semibold mb-4 text-center">Disponibilidades</h2>
             
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Hora inicio</label>
-                <input type="time" name="disponibilidades[{{ $index }}][hora_inicio]" 
-                       value="{{ is_array($disponibilidad) ? $disponibilidad['hora_inicio'] : $disponibilidad->hora_inicio->format('H:i') }}" 
-                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-            </div>
+            @php
+                $disponibilidades = old('disponibilidades', $medico->disponibilidades);
+                if(empty($disponibilidades)) {
+                    $disponibilidades = [['dia_semana' => '1', 'hora_inicio' => '', 'hora_fin' => '']];
+                }
+            @endphp
             
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Hora fin</label>
-                <input type="time" name="disponibilidades[{{ $index }}][hora_fin]" 
-                       value="{{ is_array($disponibilidad) ? $disponibilidad['hora_fin'] : $disponibilidad->hora_fin->format('H:i') }}" 
-                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-            </div>
-            
-            <div class="flex items-end">
-                <button type="button" class="remove-disponibilidad px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600">
+            @foreach($disponibilidades as $index => $disp)
+            <div class="disponibilidad mb-4">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Día</label>
+                        <select name="disponibilidades[{{ $index }}][dia_semana]"
+                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                            @foreach($diasSemana as $key => $dia)
+                                <option value="{{ $key }}" 
+                                    {{ (is_array($disp) ? $disp['dia_semana'] : $disp->dia_semana) == $key ? 'selected' : '' }}>
+                                    {{ $dia }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Hora inicio</label>
+                        <input type="time" name="disponibilidades[{{ $index }}][hora_inicio]"
+                               value="{{ is_array($disp) ? $disp['hora_inicio'] : $disp->hora_inicio->format('H:i') }}"
+                               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">Hora fin</label>
+                        <input type="time" name="disponibilidades[{{ $index }}][hora_fin]"
+                               value="{{ is_array($disp) ? $disp['hora_fin'] : $disp->hora_fin->format('H:i') }}"
+                               class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    </div>
+                </div>
+                <button type="button"
+                        class="remove-disponibilidad mt-2 px-2 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500">
                     Eliminar
                 </button>
             </div>
+            @endforeach
         </div>
-    @endforeach
-    
-    <button type="button" id="add-disponibilidad"
-            class="mt-4 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500">
-        Agregar Horario
-    </button>
+        
+        <button type="button" id="add-disponibilidad"
+                class="w-full px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500">
+            Agregar Disponibilidad
+        </button>
+    </div>
 </div>
 
-@push('scripts')
+@section('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    const container = document.getElementById('disponibilidades-container');
+    const disponibilidades = document.getElementById('disponibilidades');
     const addButton = document.getElementById('add-disponibilidad');
-    let index = {{ count(old('disponibilidades', $medico->disponibilidades)) }};
-    
-    addButton.addEventListener('click', function() {
-        const template = `
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4 disponibilidad-item">
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Día</label>
-                <select name="disponibilidades[${index}][dia_semana]" 
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                    @foreach($diasSemana as $key => $dia)
-                        <option value="{{ $key }}">{{ $dia }}</option>
-                    @endforeach
-                </select>
-            </div>
-            
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Hora inicio</label>
-                <input type="time" name="disponibilidades[${index}][hora_inicio]" 
-                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-            </div>
-            
-            <div>
-                <label class="block text-sm font-medium text-gray-700">Hora fin</label>
-                <input type="time" name="disponibilidades[${index}][hora_fin]" 
-                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-            </div>
-            
-            <div class="flex items-end">
-                <button type="button" class="remove-disponibilidad px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600">
-                    Eliminar
-                </button>
-            </div>
-        </div>
-        `;
+
+    if (addButton && disponibilidades) {
+        const originalDisponibilidad = disponibilidades.querySelector('.disponibilidad');
         
-        container.insertAdjacentHTML('beforeend', template);
-        index++;
-    });
-    
-    container.addEventListener('click', function(e) {
-        if (e.target.classList.contains('remove-disponibilidad')) {
-            e.target.closest('.disponibilidad-item').remove();
-        }
-    });
+        addButton.addEventListener('click', function() {
+            const newDisponibilidad = originalDisponibilidad.cloneNode(true);
+            
+            newDisponibilidad.querySelectorAll('input').forEach(input => input.value = '');
+            newDisponibilidad.querySelector('select').selectedIndex = 0;
+            
+            const newIndex = document.querySelectorAll('.disponibilidad').length;
+            newDisponibilidad.querySelectorAll('[name]').forEach(el => {
+                const name = el.getAttribute('name');
+                el.setAttribute('name', name.replace(/\[\d+\]/, `[${newIndex}]`));
+            });
+            
+            disponibilidades.appendChild(newDisponibilidad);
+        });
+
+        disponibilidades.addEventListener('click', function(event) {
+            if (event.target.classList.contains('remove-disponibilidad')) {
+                if (document.querySelectorAll('.disponibilidad').length > 1) {
+                    event.target.closest('.disponibilidad').remove();
+                    
+                    document.querySelectorAll('.disponibilidad').forEach((disp, index) => {
+                        disp.querySelectorAll('[name]').forEach(el => {
+                            const name = el.getAttribute('name');
+                            el.setAttribute('name', name.replace(/\[\d+\]/, `[${index}]`));
+                        });
+                    });
+                }
+            }
+        });
+    }
 });
 </script>
-@endpush
+@endsection

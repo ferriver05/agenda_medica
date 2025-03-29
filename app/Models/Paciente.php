@@ -42,4 +42,9 @@ class Paciente extends Model
     {
         return $this->hasMany(Cita::class);
     }
+
+    public function ultimaCita()
+    {
+        return $this->hasOne(Cita::class)->latestOfMany();
+    }
 }

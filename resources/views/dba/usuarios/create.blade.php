@@ -9,16 +9,6 @@
 
             <h2 class="text-xl font-semibold mb-4">Datos Generales</h2>
 
-            @if ($errors->any())
-                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div class="mb-4">
                     <label for="name" class="block text-sm font-medium text-gray-700">Nombre</label>
@@ -248,7 +238,6 @@
             <div id="camposMedico" class="hidden">
                 <h2 class="text-xl font-semibold mt-6 mb-4">Datos del Médico</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <!-- Número de Licencia -->
                     <div class="mb-4">
                         <label for="numero_licencia" class="block text-sm font-medium text-gray-700">Número de
                             Licencia</label>
@@ -260,7 +249,6 @@
                         @enderror
                     </div>
 
-                    <!-- Número de Sala -->
                     <div class="mb-4">
                         <label for="numero_sala" class="block text-sm font-medium text-gray-700">Número de Sala</label>
                         <input type="text" name="numero_sala" id="numero_sala" value="{{ old('numero_sala') }}"
@@ -270,7 +258,6 @@
                         @enderror
                     </div>
 
-                    <!-- Especialidades -->
                     <div class="mb-4">
                         <label for="especialidades" class="block text-sm font-medium text-gray-700">Especialidades</label>
                         <select name="especialidades[]" id="especialidades" multiple
@@ -285,14 +272,12 @@
                     </div>
                 </div>
 
-                <!-- Disponibilidades -->
                 <div class="flex justify-center">
                     <div class="w-full md:w-1/2">
                         <div id="disponibilidades" class="mb-4">
                             <h2 class="text-xl font-semibold mt-6 mb-4">Disponibilidades</h2>
                             <div class="disponibilidad mb-4">
                                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                    <!-- Día de la semana -->
                                     <div>
                                         <label for="dia_semana" class="block text-sm font-medium text-gray-700">Día de la
                                             semana</label>
@@ -307,14 +292,12 @@
                                             <option value="6">Sábado</option>
                                         </select>
                                     </div>
-                                    <!-- Hora de inicio -->
                                     <div>
                                         <label for="hora_inicio" class="block text-sm font-medium text-gray-700">Hora de
                                             inicio</label>
                                         <input type="time" name="hora_inicio[]"
                                             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                                     </div>
-                                    <!-- Hora de fin -->
                                     <div>
                                         <label for="hora_fin" class="block text-sm font-medium text-gray-700">Hora de
                                             fin</label>
@@ -326,7 +309,6 @@
                                     class="remove-disponibilidad mt-2 px-2 py-1 bg-red-500 text-white rounded-md hover:bg-red-600">Eliminar</button>
                             </div>
                         </div>
-                        <!-- Botón para agregar disponibilidades -->
                         <button type="button" id="add-disponibilidad"
                             class="w-full px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600">Agregar
                             Disponibilidad</button>

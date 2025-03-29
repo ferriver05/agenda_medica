@@ -19,38 +19,32 @@
                 </div>
             @endif
 
-            <!-- Datos generales del usuario -->
             <h2 class="text-xl font-semibold mb-4">Datos Generales</h2>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <!-- Campo DNI (no editable) -->
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700">DNI</label>
                     <p class="mt-1 p-2 bg-gray-100 rounded-md">{{ $usuario->dni }}</p>
                     <input type="hidden" name="dni" value="{{ $usuario->dni }}">
                 </div>
 
-                <!-- Campo Rol (no editable) -->
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700">Rol</label>
                     <p class="mt-1 p-2 bg-gray-100 rounded-md">{{ $usuario->rol }}</p>
                 </div>
 
-                <!-- Nombre (editable) -->
                 <div class="mb-4">
                     <label for="name" class="block text-sm font-medium text-gray-700">Nombre</label>
                     <input type="text" name="name" id="name" value="{{ old('name', $usuario->name) }}"
                         class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                 </div>
 
-                <!-- Email (editable) -->
                 <div class="mb-4">
                     <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
                     <input type="email" name="email" id="email" value="{{ old('email', $usuario->email) }}"
                         class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                 </div>
 
-                <!-- Resto de campos generales editables -->
                 <div class="mb-4">
                     <label for="fecha_nacimiento" class="block text-sm font-medium text-gray-700">Fecha Nacimiento</label>
                     <input type="date" name="fecha_nacimiento" id="fecha_nacimiento"
@@ -117,7 +111,7 @@
             @endif
 
             <div class="mt-6 flex justify-between">
-                <a href="{{ route('dba.usuarios.show', $usuario) }}"
+                <a href="{{ route('dba.usuarios.resumen') }}"
                     class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500">
                     Cancelar
                 </a>

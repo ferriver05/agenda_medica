@@ -1,7 +1,6 @@
 <h2 class="text-xl font-semibold mt-6 mb-4">Datos del Paciente</h2>
 
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-    <!-- Tipo de sangre -->
     <div class="mb-4">
         <label for="tipo_sangre" class="block text-sm font-medium text-gray-700">Tipo de Sangre</label>
         <select name="tipo_sangre" id="tipo_sangre"
@@ -16,7 +15,6 @@
         </select>
     </div>
 
-    <!-- Seguro médico -->
     <div class="mb-4">
         <label for="seguro_medico" class="block text-sm font-medium text-gray-700">Seguro Médico</label>
         <input type="text" name="seguro_medico" id="seguro_medico"
@@ -24,14 +22,12 @@
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
     </div>
 
-    <!-- Ocupación -->
     <div class="mb-4">
         <label for="ocupacion" class="block text-sm font-medium text-gray-700">Ocupación</label>
         <input type="text" name="ocupacion" id="ocupacion" value="{{ old('ocupacion', $paciente->ocupacion) }}"
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
     </div>
 
-    <!-- Contacto emergencia -->
     <div class="mb-4">
         <label for="contacto_emergencia" class="block text-sm font-medium text-gray-700">Contacto de Emergencia</label>
         <input type="text" name="contacto_emergencia" id="contacto_emergencia"
@@ -39,7 +35,6 @@
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
     </div>
 
-    <!-- Teléfono emergencia -->
     <div class="mb-4">
         <label for="telefono_emergencia" class="block text-sm font-medium text-gray-700">Teléfono de Emergencia</label>
         <input type="text" name="telefono_emergencia" id="telefono_emergencia"
@@ -48,7 +43,6 @@
     </div>
 </div>
 
-<!-- Historial médico -->
 <h3 class="text-lg font-semibold mt-6 mb-2">Historial Médico</h3>
 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
     <div class="mb-4">
@@ -80,6 +74,12 @@
             Familiares</label>
         <textarea name="antecedentes_familiares" id="antecedentes_familiares"
             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">{{ old('antecedentes_familiares', $paciente->historial->antecedentes_familiares) }}</textarea>
+    </div>
+
+    <div class="mb-4">
+        <label for="otras_condiciones" class="block text-sm font-medium text-gray-700">Otras Condiciones</label>
+        <textarea name="otras_condiciones" id="otras_condiciones"
+            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">{{ old('otras_condiciones', $paciente->historial->otras_condiciones ?? '') }}</textarea>
     </div>
 
     <div class="mb-4">

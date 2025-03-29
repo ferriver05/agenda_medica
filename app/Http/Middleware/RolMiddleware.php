@@ -21,6 +21,11 @@ class RolMiddleware
             return redirect('/login');
         }
 
+        if (!Auth::user()->activo) {
+            Auth::logout();
+            return redirect('/login')->with('error', 'Tu cuenta está inactiva. Contacta al administrador.');
+        }
+
         if (Auth::check() && Auth::user()->rol === $rol) {
             return $next($request);
         }
