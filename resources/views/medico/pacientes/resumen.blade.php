@@ -55,10 +55,12 @@
                            class="px-3 py-1 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 transition duration-200">
                             Ver
                         </a>
-                        <a href="" 
-                           class="px-3 py-1 bg-yellow-100 text-yellow-600 rounded hover:bg-yellow-200 transition duration-200">
-                            Agendar Cita
-                        </a>
+                        @if($paciente->user->activo)
+                            <a href="{{ route('medico.citas.reservar', ['dni' => $paciente->user->dni]) }}" 
+                                class="px-3 py-1 bg-yellow-100 text-yellow-600 rounded hover:bg-yellow-200 transition duration-200">
+                                Agendar Cita
+                            </a>
+                        @endif
                     </td>
                 </tr>
                 @endforeach

@@ -7,6 +7,31 @@
 
             <h1 class="text-2xl font-bold mb-4">Reservar Cita</h1>
 
+            <!-- Mostrar errores generales -->
+            @if ($errors->any())
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <!-- Mostrar mensajes flash -->
+            @if (session('error'))
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            @if (session('success'))
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            <!-- Resto del formulario... -->
             <!-- Selección de especialidad -->
             <div class="mb-4">
                 <label for="especialidad" class="block text-gray-700 text-sm font-bold mb-2">Especialidad</label>
@@ -15,18 +40,27 @@
                     required>
                     <option value="">Seleccione una especialidad</option>
                     @foreach ($especialidades as $especialidad)
-                        <option value="{{ $especialidad->id }}">{{ $especialidad->nombre }}</option>
+                        <option value="{{ $especialidad->id }}" {{ old('especialidad_id') == $especialidad->id ? 'selected' : '' }}>
+                            {{ $especialidad->nombre }}
+                        </option>
                     @endforeach
                 </select>
             </div>
 
-            <!-- Selección de médico -->
             <div class="mb-4">
                 <label for="medico" class="block text-gray-700 text-sm font-bold mb-2">Médico</label>
                 <select name="medico_id" id="medico"
                     class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     disabled required>
                     <option value="">Seleccione un médico</option>
+                    @if(old('medico_id'))
+                        @php
+                            $medico = \App\Models\Medico::with('user')->find(old('medico_id'));
+                        @endphp
+                        @if($medico)
+                            <option value="{{ $medico->id }}" selected>{{ $medico->user->name }}</option>
+                        @endif
+                    @endif
                 </select>
             </div>
 
@@ -63,12 +97,6 @@
                     Regresar
                 </button>
             
-                <!-- Botón Limpiar -->
-                <button type="reset" 
-                    class="bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded">
-                    Limpiar
-                </button>
-            
                 <!-- Botón Confirmar Reserva -->
                 <button type="submit" onclick="return confirm('¿Estás seguro de que quieres reservar esta cita?')" 
                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
@@ -87,16 +115,8 @@
             $('#especialidad').change(function() {
                 var especialidadId = $(this).val();
 
-                $('#medico')
-                    .empty()
-                    .append('<option value="">Seleccione un médico</option>')
-                    .prop('disabled', true);
-
-                $('#hora')
-                    .empty()
-                    .append('<option value="">Seleccione una hora</option>')
-                    .prop('disabled', true);
-
+                resetSelects(); // Resetear ambos selects
+                
                 if (especialidadId) {
                     $.get('/medicos-por-especialidad/' + especialidadId, function(data) {
                         $.each(data, function(index, medico) {
@@ -104,36 +124,57 @@
                                 medico.user.name + '</option>');
                         });
                         $('#medico').prop('disabled', false);
+                        
+                        // Si hay un médico seleccionado previamente (por old), mantenerlo
+                        @if(old('medico_id'))
+                            $('#medico').val('{{ old("medico_id") }}');
+                        @endif
                     });
                 }
             });
 
-            // Habilitar selección de fecha al elegir médico
-            $('#medico').change(function() {
-                var medicoId = $(this).val();
-                if (medicoId) {} else {
-                    $('#hora').empty().prop('disabled', true); // Deshabilitar hora
-                }
-            });
-
-            // Cargar horas disponibles al seleccionar fecha
-            $('#fecha').change(function() {
+            // Cargar horas disponibles al cambiar fecha o médico
+            $('#fecha, #medico').change(function() {
                 var medicoId = $('#medico').val();
-                var fecha = $(this).val();
+                var fecha = $('#fecha').val();
+                
+                $('#hora').empty().append('<option value="">Seleccione una hora</option>');
+                
                 if (medicoId && fecha) {
                     $.get('/horas-disponibles/' + medicoId + '/' + fecha, function(data) {
                         $('#hora').empty().append('<option value="">Seleccione una hora</option>');
                         $.each(data, function(index, hora) {
-                            $('#hora').append('<option value="' + hora + '">' + hora +
-                                '</option>');
+                            $('#hora').append('<option value="' + hora + '">' + hora + '</option>');
                         });
-                        $('#hora').prop('disabled', false); // Habilitar el select de horas
+                        $('#hora').prop('disabled', false);
+                        
+                        // Si hay una hora seleccionada previamente (por old), mantenerla
+                        @if(old('hora_inicio'))
+                            $('#hora').val('{{ old("hora_inicio") }}');
+                        @endif
                     });
                 } else {
-                    $('#hora').empty().prop('disabled',
-                        true); // Deshabilitar si no hay médico o fecha seleccionada
+                    $('#hora').prop('disabled', true);
                 }
             });
+
+            // Función para resetear selects
+            function resetSelects() {
+                $('#medico')
+                    .empty()
+                    .append('<option value="">Seleccione un médico</option>')
+                    .prop('disabled', true);
+                    
+                $('#hora')
+                    .empty()
+                    .append('<option value="">Seleccione una hora</option>')
+                    .prop('disabled', true);
+            }
+            
+            // Si hay valores old, cargarlos al inicio
+            @if(old('especialidad_id'))
+                $('#especialidad').val('{{ old("especialidad_id") }}').trigger('change');
+            @endif
         });
     </script>
 @endsection

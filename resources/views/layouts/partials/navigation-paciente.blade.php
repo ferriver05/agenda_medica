@@ -21,9 +21,6 @@
                     <x-nav-link :href="route('paciente.citas.reservar')" :active="request()->routeIs('paciente.citas.reservar')" class="text-white">
                         {{ __('Reservar') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('paciente.informacion')" :active="request()->routeIs('paciente.informacion')" class="text-white">
-                        {{ __('Información Personal') }}
-                    </x-nav-link>
                 </div>
             </div>
 
@@ -43,8 +40,8 @@
                     </x-slot>
 
                     <x-slot name="content">
-                        <x-dropdown-link :href="route('profile.edit')">
-                            {{ __('Profile') }}
+                        <x-dropdown-link :href="route('paciente.informacion')">
+                            {{ __('Perfil') }}
                         </x-dropdown-link>
 
                         <!-- Authentication -->
@@ -54,7 +51,7 @@
                             <x-dropdown-link :href="route('logout')"
                                     onclick="event.preventDefault();
                                                 this.closest('form').submit();">
-                                {{ __('Log Out') }}
+                                {{ __('Cerrar Sesión') }}
                             </x-dropdown-link>
                         </form>
                     </x-slot>
@@ -84,9 +81,6 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('paciente.citas.reservar')" :active="request()->routeIs('paciente.citas.reservar')">
                 {{ __('Reservar') }}
-            </x-responsive-nav-link>
-            <x-responsive-nav-link :href="route('paciente.informacion')" :active="request()->routeIs('paciente.informacion')">
-                {{ __('Información Personal') }}
             </x-responsive-nav-link>
         </div>
 

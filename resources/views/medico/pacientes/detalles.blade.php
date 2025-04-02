@@ -21,6 +21,10 @@
                         <span class="col-span-2">{{ $paciente->user->name }}</span>
                     </div>
                     <div class="grid grid-cols-3 gap-2">
+                        <span class="font-medium text-gray-600">DNI:</span>
+                        <span class="col-span-2">{{ $paciente->user->dni }}</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2">
                         <span class="font-medium text-gray-600">Edad:</span>
                         <span class="col-span-2">
                             {{ \Carbon\Carbon::parse($paciente->user->fecha_nacimiento)->age }} años

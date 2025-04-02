@@ -5,7 +5,7 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('paciente.dashboard') }}">
+                    <a href="{{ route('dba.dashboard') }}">
                         <img src="{{ asset('img/doclogo.png') }}" alt="Logo" class="h-9 w-auto">
                     </a>
                 </div>

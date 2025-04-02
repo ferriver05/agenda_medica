@@ -8,7 +8,7 @@ use App\Models\Medico;
 use App\Models\Disponibilidad;
 use App\Models\Cita;
 use App\Models\User;
-
+use Carbon\Carbon;
 
 class CitaController extends Controller
 {
@@ -21,10 +21,13 @@ class CitaController extends Controller
     public function obtenerMedicosPorEspecialidad($especialidad_id)
     {
         $medicos = Medico::whereHas('especialidades', function($query) use ($especialidad_id) {
-            $query->where('especialidad_id', $especialidad_id);
-        })
-        ->with('user')
-        ->get();
+                $query->where('especialidad_id', $especialidad_id);
+            })
+            ->whereHas('user', function($query) {
+                $query->where('activo', 1);
+            })
+            ->with('user')
+            ->get();
     
         return response()->json($medicos);
     }
@@ -69,15 +72,42 @@ class CitaController extends Controller
         if (!auth()->user()->paciente) {
             return redirect()->route('paciente.citas.reservar')->with('error', 'Debes completar tu perfil de paciente antes de reservar una cita.');
         }
-
+    
+        $citasPendientesCount = Cita::where('paciente_id', auth()->user()->paciente->id)
+                                    ->where('estado', 'pendiente')
+                                    ->count();
+        
+        if ($citasPendientesCount >= 3) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'No puedes tener más de 3 citas pendientes de confirmación.');
+        }
+    
         $request->validate([
             'medico_id' => 'required|exists:medicos,id',
             'especialidad_id' => 'required|exists:especialidades,id',
-            'fecha' => 'required|date|after_or_equal:today|before_or_equal:' . now()->addMonth(),
+            'fecha' => [
+                'required',
+                'date',
+                'after_or_equal:'.now()->addDays(2)->toDateString(),
+                'before_or_equal:'.now()->addMonth()->toDateString()
+            ],
             'hora_inicio' => 'required|date_format:H:i',
             'razon_paciente' => 'required|string|max:255',
         ]);
-
+    
+        $horaOcupada = Cita::where('medico_id', $request->medico_id)
+            ->where('fecha', $request->fecha)
+            ->where('hora_inicio', $request->hora_inicio)
+            ->whereNotIn('estado', ['cancelada'])
+            ->exists();
+        
+        if ($horaOcupada) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'La hora seleccionada ya no está disponible. Por favor elige otra.');
+        }
+    
         $cita = new Cita();
         $cita->paciente_id = auth()->user()->paciente->id;
         $cita->medico_id = $request->medico_id;
@@ -89,8 +119,8 @@ class CitaController extends Controller
         $cita->tipo_cita = 'primera_vez';
         $cita->estado = 'pendiente';
         $cita->save();
-
-        return redirect()->route('paciente.citas.resumen')->with('success', 'Cita reservada con éxito.');
+    
+        return redirect()->route('paciente.citas.resumen')->with('success', 'Cita reservada con éxito. Estará pendiente de confirmación por el médico.');
     }
 
     public function mostrarDetalles($id)
@@ -117,56 +147,68 @@ class CitaController extends Controller
     public function mostrarResumenPaciente()
     {
         $user = auth()->user();
-
+    
         $citasConfirmadas = [];
         $citasPendientes = [];
         $citasPasadas = [];
-
+    
         if ($user->rol === 'Paciente') {
             $citasConfirmadas = Cita::where('paciente_id', $user->paciente->id)
                 ->where('estado', 'confirmada')
                 ->with(['medico.user', 'especialidad'])
+                ->orderBy('fecha', 'asc') 
+                ->orderBy('hora_inicio', 'asc')
                 ->get();
-
+    
             $citasPendientes = Cita::where('paciente_id', $user->paciente->id)
                 ->where('estado', 'pendiente')
                 ->with(['medico.user', 'especialidad'])
+                ->orderBy('fecha', 'asc')
+                ->orderBy('hora_inicio', 'asc')
                 ->get();
-
+    
             $citasPasadas = Cita::where('paciente_id', $user->paciente->id)
                 ->whereIn('estado', ['completada', 'cancelada'])
                 ->with(['medico.user', 'especialidad'])
+                ->orderBy('fecha', 'desc')
+                ->orderBy('hora_inicio', 'desc')
                 ->get();
         }
-
+    
         return view('paciente.citas.resumen', compact('citasConfirmadas', 'citasPendientes', 'citasPasadas'));
     }
-
+    
     public function mostrarResumenMedico()
     {
         $user = auth()->user();
-
+    
         $citasConfirmadas = [];
         $citasPendientes = [];
         $citasPasadas = [];
-
+    
         if ($user->rol === 'Medico') {
             $citasConfirmadas = Cita::where('medico_id', $user->medico->id)
                 ->where('estado', 'confirmada')
                 ->with(['paciente.user', 'especialidad'])
+                ->orderBy('fecha', 'asc')
+                ->orderBy('hora_inicio', 'asc')
                 ->get();
-
+    
             $citasPendientes = Cita::where('medico_id', $user->medico->id)
                 ->where('estado', 'pendiente')
                 ->with(['paciente.user', 'especialidad'])
+                ->orderBy('fecha', 'asc')
+                ->orderBy('hora_inicio', 'asc')
                 ->get();
-
+    
             $citasPasadas = Cita::where('medico_id', $user->medico->id)
                 ->whereIn('estado', ['completada', 'cancelada'])
                 ->with(['paciente.user', 'especialidad'])
+                ->orderBy('fecha', 'desc')
+                ->orderBy('hora_inicio', 'desc')
                 ->get();
         }
-
+    
         return view('medico.citas.resumen', compact('citasConfirmadas', 'citasPendientes', 'citasPasadas'));
     }
 
@@ -261,10 +303,15 @@ class CitaController extends Controller
             ->with('success', 'La cita ha sido marcada como completada correctamente.');
     }
 
-    public function mostrarFormularioReservaMedico()
+    public function mostrarFormularioReservaMedico(Request $request)
     {
         $especialidades = auth()->user()->medico->especialidades;
-        return view('medico.citas.reservar', compact('especialidades'));
+        $dni = $request->input('dni');
+        
+        return view('medico.citas.reservar', [
+            'especialidades' => $especialidades,
+            'dni_precargado' => $dni
+        ]);
     }
 
     public function buscarPacientePorDni($dni)
@@ -326,13 +373,36 @@ class CitaController extends Controller
         $request->validate([
             'dni' => 'required|exists:users,dni',
             'especialidad_id' => 'required|exists:especialidades,id',
-            'fecha' => 'required|date|after_or_equal:today',
+            'fecha' => [
+                'required',
+                'date',
+                'after_or_equal:'.now()->addDays(2)->toDateString(),
+                'before_or_equal:'.now()->addMonths(12)->toDateString()
+            ],
             'hora_inicio' => 'required|date_format:H:i',
             'razon_cita' => 'required|string|max:255',
         ]);
-
+    
         $paciente = User::where('dni', $request->dni)->where('rol', 'Paciente')->first();
-
+    
+        if ($paciente->activo != 1) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'No se puede agendar cita para este paciente porque su cuenta no está activa.');
+        }
+    
+        $horaOcupada = Cita::where('medico_id', auth()->user()->medico->id)
+            ->where('fecha', $request->fecha)
+            ->where('hora_inicio', $request->hora_inicio)
+            ->whereNotIn('estado', ['cancelada'])
+            ->exists();
+    
+        if ($horaOcupada) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'La hora seleccionada ya no está disponible. Por favor elige otra.');
+        }
+    
         $cita = new Cita();
         $cita->paciente_id = $paciente->paciente->id;
         $cita->medico_id = auth()->user()->medico->id;
@@ -344,7 +414,7 @@ class CitaController extends Controller
         $cita->tipo_cita = 'seguimiento';
         $cita->estado = 'confirmada';
         $cita->save();
-
+    
         return redirect()->route('medico.citas.resumen')->with('success', 'Cita reservada con éxito.');
     }
 }

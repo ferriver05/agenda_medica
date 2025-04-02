@@ -92,7 +92,7 @@ Route::get('/medico/pacientes', [MedicoController::class, 'pacientes'])->name('m
 Route::get('/medico/pacientes/{paciente}', [MedicoController::class, 'showPaciente'])->name('medico.pacientes.detalles');
 
 // -----------------2.1 RESERVAR --------------//
-Route::get('/medico/citas/reservar', [CitaController::class, 'mostrarFormularioReservaMedico'])->name('medico.citas.reservar');
+Route::get('/medico/citas/reservar/{dni?}', [CitaController::class, 'mostrarFormularioReservaMedico'])->name('medico.citas.reservar');
 Route::get('/buscar-paciente-por-dni/{dni}', [CitaController::class, 'buscarPacientePorDni'])->name('buscar.paciente.por.dni');
 Route::get('/horas-disponibles-medico/{dni}/{fecha}', [CitaController::class, 'obtenerHorasDisponiblesMedico'])->name('horas.disponibles.medico');
 Route::post('/medico/procesar-reserva', [CitaController::class, 'procesarReservaMedico'])->name('medico.procesar.reserva');

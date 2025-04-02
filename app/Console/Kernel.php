@@ -4,6 +4,8 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use App\Models\Cita;
+use Illuminate\Support\Facades\DB;
 
 class Kernel extends ConsoleKernel
 {
@@ -12,6 +14,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
+        // Completar citas confirmadas pasadas
         $schedule->call(function () {
             Cita::where('estado', 'confirmada')
                 ->whereDate('fecha', '<', now()->toDateString())
@@ -22,6 +25,16 @@ class Kernel extends ConsoleKernel
                 ->update([
                     'estado' => 'completada',
                     'notas_medico' => DB::raw('COALESCE(CONCAT(notas_medico, "\n[Cita completada automáticamente por sistema]"), "[Cita completada automáticamente por sistema]")')
+                ]);
+        })->dailyAt('23:59');
+    
+        // Cancelar citas pendientes no confirmadas un día antes
+        $schedule->call(function () {
+            Cita::where('estado', 'pendiente')
+                ->whereDate('fecha', now()->addDay()->toDateString())
+                ->update([
+                    'estado' => 'cancelada',
+                    'notas_medico' => DB::raw('COALESCE(CONCAT(notas_medico, "\n[Cita cancelada automáticamente por falta de confirmación]"), "[Cita cancelada automáticamente por falta de confirmación]")')
                 ]);
         })->dailyAt('23:59');
     }
