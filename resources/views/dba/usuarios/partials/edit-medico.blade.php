@@ -67,13 +67,13 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Hora inicio</label>
-                        <input type="time" name="disponibilidades[{{ $index }}][hora_inicio]"
+                        <input type="time" step="1800" name="disponibilidades[{{ $index }}][hora_inicio]"
                                value="{{ is_array($disp) ? $disp['hora_inicio'] : $disp->hora_inicio->format('H:i') }}"
                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Hora fin</label>
-                        <input type="time" name="disponibilidades[{{ $index }}][hora_fin]"
+                        <input type="time" step="1800" name="disponibilidades[{{ $index }}][hora_fin]"
                                value="{{ is_array($disp) ? $disp['hora_fin'] : $disp->hora_fin->format('H:i') }}"
                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                     </div>
@@ -95,43 +95,96 @@
 
 @section('scripts')
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const disponibilidades = document.getElementById('disponibilidades');
-    const addButton = document.getElementById('add-disponibilidad');
-
-    if (addButton && disponibilidades) {
-        const originalDisponibilidad = disponibilidades.querySelector('.disponibilidad');
-        
-        addButton.addEventListener('click', function() {
-            const newDisponibilidad = originalDisponibilidad.cloneNode(true);
+    document.addEventListener('DOMContentLoaded', function() {
+        const disponibilidades = document.getElementById('disponibilidades');
+        const addButton = document.getElementById('add-disponibilidad');
+    
+        // Función para validar formato de hora (hh:00 o hh:30)
+        const validateTimeFormat = (timeInput) => {
+            if (!timeInput.value) return true;
             
-            newDisponibilidad.querySelectorAll('input').forEach(input => input.value = '');
-            newDisponibilidad.querySelector('select').selectedIndex = 0;
+            const minutes = timeInput.value.split(':')[1];
+            const isValid = minutes === '00' || minutes === '30';
             
-            const newIndex = document.querySelectorAll('.disponibilidad').length;
-            newDisponibilidad.querySelectorAll('[name]').forEach(el => {
-                const name = el.getAttribute('name');
-                el.setAttribute('name', name.replace(/\[\d+\]/, `[${newIndex}]`));
-            });
-            
-            disponibilidades.appendChild(newDisponibilidad);
-        });
-
-        disponibilidades.addEventListener('click', function(event) {
-            if (event.target.classList.contains('remove-disponibilidad')) {
-                if (document.querySelectorAll('.disponibilidad').length > 1) {
-                    event.target.closest('.disponibilidad').remove();
-                    
-                    document.querySelectorAll('.disponibilidad').forEach((disp, index) => {
-                        disp.querySelectorAll('[name]').forEach(el => {
-                            const name = el.getAttribute('name');
-                            el.setAttribute('name', name.replace(/\[\d+\]/, `[${index}]`));
-                        });
-                    });
-                }
+            if (!isValid) {
+                timeInput.setCustomValidity('La hora debe terminar en :00 o :30');
+                timeInput.reportValidity();
+                return false;
             }
-        });
-    }
-});
-</script>
+            
+            timeInput.setCustomValidity('');
+            return true;
+        };
+    
+        // Validar todos los inputs de tiempo al cambiar
+        const setupTimeValidation = (container) => {
+            container.querySelectorAll('input[type="time"]').forEach(input => {
+                input.addEventListener('change', function() {
+                    validateTimeFormat(this);
+                });
+            });
+        };
+    
+        if (addButton && disponibilidades) {
+            const originalDisponibilidad = disponibilidades.querySelector('.disponibilidad');
+            
+            // Configurar validación inicial para los campos existentes
+            setupTimeValidation(disponibilidades);
+    
+            addButton.addEventListener('click', function() {
+                const newDisponibilidad = originalDisponibilidad.cloneNode(true);
+                
+                // Limpiar valores del nuevo elemento
+                newDisponibilidad.querySelectorAll('input').forEach(input => input.value = '');
+                newDisponibilidad.querySelector('select').selectedIndex = 0;
+                
+                // Actualizar índices
+                const newIndex = document.querySelectorAll('.disponibilidad').length;
+                newDisponibilidad.querySelectorAll('[name]').forEach(el => {
+                    const name = el.getAttribute('name');
+                    el.setAttribute('name', name.replace(/\[\d+\]/, `[${newIndex}]`));
+                });
+                
+                // Agregar al contenedor
+                disponibilidades.appendChild(newDisponibilidad);
+                
+                // Configurar validación para los nuevos campos
+                setupTimeValidation(newDisponibilidad);
+            });
+    
+            disponibilidades.addEventListener('click', function(event) {
+                if (event.target.classList.contains('remove-disponibilidad')) {
+                    if (document.querySelectorAll('.disponibilidad').length > 1) {
+                        event.target.closest('.disponibilidad').remove();
+                        
+                        // Reindexar elementos restantes
+                        document.querySelectorAll('.disponibilidad').forEach((disp, index) => {
+                            disp.querySelectorAll('[name]').forEach(el => {
+                                const name = el.getAttribute('name');
+                                el.setAttribute('name', name.replace(/\[\d+\]/, `[${index}]`));
+                            });
+                        });
+                    }
+                }
+            });
+    
+            // Validación adicional al enviar el formulario
+            document.querySelector('form').addEventListener('submit', function(e) {
+                let isValid = true;
+                
+                // Validar todos los campos de tiempo
+                document.querySelectorAll('input[type="time"]').forEach(input => {
+                    if (!validateTimeFormat(input)) {
+                        isValid = false;
+                    }
+                });
+                
+                if (!isValid) {
+                    e.preventDefault();
+                    alert('Por favor corrija los horarios. Todos deben terminar en :00 o :30');
+                }
+            });
+        }
+    });
+    </script>
 @endsection

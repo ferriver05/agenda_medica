@@ -9,10 +9,21 @@
 
             <h2 class="text-xl font-semibold mb-4">Datos Generales</h2>
 
+            @if ($errors->any())
+                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
+                    <p class="font-bold">Errores en el formulario</p>
+                    <ul class="list-disc list-inside">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div class="mb-4">
                     <label for="name" class="block text-sm font-medium text-gray-700">Nombre</label>
-                    <input type="text" name="name" id="name" value="{{ old('name') }}"
+                    <input required type="text" name="name" id="name" value="{{ old('name') }}"
                         class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                     @error('name')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -21,7 +32,7 @@
 
                 <div class="mb-4">
                     <label for="dni" class="block text-sm font-medium text-gray-700">DNI</label>
-                    <input type="text" name="dni" id="dni" value="{{ old('dni') }}"
+                    <input required type="text" name="dni" id="dni" value="{{ old('dni') }}"
                         class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                     @error('dni')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -64,7 +75,7 @@
 
                 <div class="mb-4">
                     <label for="email" class="block text-sm font-medium text-gray-700">Correo</label>
-                    <input type="email" name="email" id="email" value="{{ old('email') }}"
+                    <input required type="email" name="email" id="email" value="{{ old('email') }}"
                         class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                     @error('email')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -74,7 +85,7 @@
                 <div class="mb-4">
                     <label for="password" class="block text-sm font-medium text-gray-700">Contraseña</label>
                     <input type="password" name="password" id="password"
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
                     @error('password')
                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -84,7 +95,7 @@
                     <label for="password_confirmation" class="block text-sm font-medium text-gray-700">Confirmar
                         Contraseña</label>
                     <input type="password" name="password_confirmation" id="password_confirmation"
-                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" required>
                 </div>
 
                 <div class="mb-4">
@@ -333,6 +344,7 @@
 @section('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Mostrar/ocultar campos según rol
             const rolSelect = document.getElementById('rol');
             const camposPaciente = document.getElementById('camposPaciente');
             const camposMedico = document.getElementById('camposMedico');
@@ -353,23 +365,97 @@
             rolSelect.addEventListener('change', mostrarCampos);
             mostrarCampos();
 
+            // Gestión de disponibilidades
             const disponibilidades = document.getElementById('disponibilidades');
             const addButton = document.getElementById('add-disponibilidad');
 
+            // Función para validar formato de hora (hh:00 o hh:30)
+            const validateTimeFormat = (timeInput) => {
+                if (!timeInput.value) return true;
+
+                const minutes = timeInput.value.split(':')[1];
+                const isValid = minutes === '00' || minutes === '30';
+
+                if (!isValid) {
+                    timeInput.setCustomValidity('La hora debe terminar en :00 o :30');
+                    timeInput.reportValidity();
+                    return false;
+                }
+
+                timeInput.setCustomValidity('');
+                return true;
+            };
+
+            // Validar todos los inputs de tiempo al cambiar
+            const setupTimeValidation = (container) => {
+                container.querySelectorAll('input[type="time"]').forEach(input => {
+                    input.addEventListener('change', function() {
+                        validateTimeFormat(this);
+                    });
+                });
+            };
+
             if (addButton && disponibilidades) {
+                const originalDisponibilidad = disponibilidades.querySelector('.disponibilidad');
+
+                // Configurar validación inicial para los campos existentes
+                setupTimeValidation(disponibilidades);
+
                 addButton.addEventListener('click', function() {
-                    const newDisponibilidad = disponibilidades.querySelector('.disponibilidad').cloneNode(
-                        true);
+                    const newDisponibilidad = originalDisponibilidad.cloneNode(true);
+
+                    // Limpiar valores del nuevo elemento
                     newDisponibilidad.querySelectorAll('input').forEach(input => input.value = '');
+                    newDisponibilidad.querySelector('select').selectedIndex = 0;
+
+                    // Actualizar índices
+                    const newIndex = document.querySelectorAll('.disponibilidad').length;
+                    newDisponibilidad.querySelectorAll('[name]').forEach(el => {
+                        const name = el.getAttribute('name');
+                        el.setAttribute('name', name.replace(/\[\d+\]/, `[${newIndex}]`));
+                    });
+
+                    // Agregar al contenedor
                     disponibilidades.appendChild(newDisponibilidad);
+
+                    // Configurar validación para los nuevos campos
+                    setupTimeValidation(newDisponibilidad);
                 });
 
                 disponibilidades.addEventListener('click', function(event) {
                     if (event.target.classList.contains('remove-disponibilidad')) {
-                        event.target.closest('.disponibilidad').remove();
+                        if (document.querySelectorAll('.disponibilidad').length > 1) {
+                            event.target.closest('.disponibilidad').remove();
+
+                            // Reindexar elementos restantes
+                            document.querySelectorAll('.disponibilidad').forEach((disp, index) => {
+                                disp.querySelectorAll('[name]').forEach(el => {
+                                    const name = el.getAttribute('name');
+                                    el.setAttribute('name', name.replace(/\[\d+\]/,
+                                        `[${index}]`));
+                                });
+                            });
+                        }
                     }
                 });
             }
+
+            // Validación adicional al enviar el formulario
+            document.querySelector('form').addEventListener('submit', function(e) {
+                let isValid = true;
+
+                // Validar todos los campos de tiempo
+                document.querySelectorAll('input[type="time"]').forEach(input => {
+                    if (!validateTimeFormat(input)) {
+                        isValid = false;
+                    }
+                });
+
+                if (!isValid) {
+                    e.preventDefault();
+                    alert('Por favor corrija los horarios. Todos deben terminar en :00 o :30');
+                }
+            });
         });
     </script>
 @endsection
