@@ -135,7 +135,7 @@ Route::middleware(['rol:DBA'])->group(function () {
 
 // ------------- 1.1 USUARIOS -----------------//
 Route::get('/dba/usuarios', [UserController::class, 'index'])->name('dba.usuarios.resumen');
-Route::get('/dba/usuarios/create', [UserController::class, 'create'])->name('dba.usuarios.create');
+Route::get('/dba/usuarios/crear', [UserController::class, 'create'])->name('dba.usuarios.create');
 Route::get('/dba/usuarios/{usuario}', [UserController::class, 'show'])->name('dba.usuarios.show');
 Route::post('/crear-usuario', [UserController::class, 'store'])->name('dba.usuarios.store');
 Route::get('/dba/usuarios/{usuario}/editar', [UserController::class, 'edit'])->name('dba.usuarios.edit');

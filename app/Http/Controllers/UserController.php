@@ -295,6 +295,13 @@ class UserController extends Controller
         try {
             DB::beginTransaction();
             
+            // Obtener especialidades actuales y nuevas
+            $currentEspecialidades = $usuario->medico->especialidades->pluck('id')->toArray();
+            $newEspecialidades = $medicoData['especialidades'];
+            
+            // Determinar qué especialidades se están eliminando
+            $removedEspecialidades = array_diff($currentEspecialidades, $newEspecialidades);
+            
             // Actualizar datos básicos del médico
             $usuario->medico->update([
                 'numero_licencia' => $medicoData['numero_licencia'],
@@ -303,6 +310,19 @@ class UserController extends Controller
             
             // Sincronizar especialidades (relación muchos a muchos)
             $usuario->medico->especialidades()->sync($medicoData['especialidades']);
+            
+            // Cancelar citas pendientes para especialidades eliminadas
+            if (!empty($removedEspecialidades)) {
+                DB::table('citas')
+                    ->where('medico_id', $usuario->medico->id)
+                    ->whereIn('especialidad_id', $removedEspecialidades)
+                    ->where('estado', 'pendiente')
+                    ->update([
+                        'estado' => 'cancelada',
+                        'notas_medico' => 'Cita cancelada automaticamente porque el médico ya no atiende esta especialidad.',
+                        'updated_at' => now()
+                    ]);
+            }
             
             // Eliminar todas las disponibilidades existentes y crear las nuevas
             $usuario->medico->disponibilidades()->delete();

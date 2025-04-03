@@ -132,6 +132,22 @@ class BackupController extends Controller
             return back()->with('error', 'Error al eliminar: '.$e->getMessage());
         }
     }
+
+    public function downloadBackup($file)
+    {
+        try {
+            $backupDisk = Storage::disk('local');
+            $filePath = 'backups/' . $file; // Misma ruta que createBackup
+            
+            if (!$backupDisk->exists($filePath)) {
+                abort(404);
+            }
+        
+            return $backupDisk->download($filePath);
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error al descargar: '.$e->getMessage());
+        }
+    }
     
     private function formatBytes($bytes, $precision = 2)
     {

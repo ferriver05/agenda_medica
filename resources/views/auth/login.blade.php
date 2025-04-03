@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
-<body class="bg-gray-100 h-screen flex items-center justify-center">
+<body class="bg-gray-300 h-screen flex items-center justify-center">
 
     <div class="flex max-w-4xl w-full bg-white shadow-lg rounded-lg overflow-hidden">
         <!-- IMG DOC -->
