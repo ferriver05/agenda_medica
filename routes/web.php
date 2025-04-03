@@ -7,6 +7,7 @@ use App\Http\Controllers\MedicoController;
 use App\Http\Controllers\DBAController;
 use App\Http\Controllers\CitaController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\BackupController;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Response;
 
@@ -139,6 +140,12 @@ Route::get('/dba/usuarios/{usuario}', [UserController::class, 'show'])->name('db
 Route::post('/crear-usuario', [UserController::class, 'store'])->name('dba.usuarios.store');
 Route::get('/dba/usuarios/{usuario}/editar', [UserController::class, 'edit'])->name('dba.usuarios.edit');
 Route::put('/update-usuario/{usuario}', [UserController::class, 'update'])->name('dba.usuarios.update');
+
+//--------------1.2 BACKUPS ------------------//
+Route::get('/dba/backups', [BackupController::class, 'listBackups'])->name('backups.index');
+Route::post('/dba/backups/create', [BackupController::class, 'createBackup'])->name('backups.create');
+Route::get('/dba/backups/download/{file}', [BackupController::class, 'downloadBackup'])->name('backups.download');
+Route::delete('/dba/backups/delete/{file}', [BackupController::class, 'deleteBackup'])->name('backups.delete');
 
 
 

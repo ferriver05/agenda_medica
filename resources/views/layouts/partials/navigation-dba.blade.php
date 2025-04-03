@@ -18,6 +18,9 @@
                     <x-nav-link :href="route('dba.usuarios.resumen')" :active="request()->routeIs('dba.usuarios.resumen')" class="text-white">
                         {{ __('Usuarios') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('backups.index')" :active="request()->routeIs('backups.index')" class="text-white">
+                        {{ __('Backups') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -75,6 +78,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('dba.usuarios.resumen')" :active="request()->routeIs('dba.usuarios.resumen')">
                 {{ __('Usuarios') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('backups.index')" :active="request()->routeIs('backups.index')">
+                {{ __('Backups') }}
             </x-responsive-nav-link>
         </div>
 
