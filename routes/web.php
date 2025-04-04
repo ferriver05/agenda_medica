@@ -60,7 +60,7 @@ Route::middleware(['rol:Paciente'])->group(function () {
     Route::get('/paciente/dashboard', [PacienteController::class, 'dashboard'])->name('paciente.dashboard');
 });
 
-Route::get('/paciente/informacion', [PacienteController::class, 'mostrarInformacion'])->name('paciente.informacion');
+Route::get('/paciente/perfil', [PacienteController::class, 'mostrarInformacion'])->name('paciente.informacion');
 
 //--------------- 1.1 RESERVAR ---------------------//
 Route::middleware(['rol:Paciente'])->group(function () {
@@ -88,6 +88,8 @@ Route::middleware(['auth', 'rol:Paciente'])->group(function () {
 Route::middleware(['rol:Medico'])->group(function () {
     Route::get('/medico/dashboard', [MedicoController::class, 'dashboard'])->name('medico.dashboard');
 });
+
+Route::get('/medico/perfil', [MedicoController::class, 'mostrarInformacion'])->name('medico.informacion');
 
 Route::get('/medico/pacientes', [MedicoController::class, 'pacientes'])->name('medico.pacientes.resumen');
 Route::get('/medico/pacientes/{paciente}', [MedicoController::class, 'showPaciente'])->name('medico.pacientes.detalles');

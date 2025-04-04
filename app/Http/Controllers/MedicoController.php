@@ -51,4 +51,25 @@ class MedicoController extends Controller
         
         return view('medico.pacientes.detalles', compact('paciente'));
     }
+
+    public function mostrarInformacion()
+    {
+        $user = auth()->user();
+        
+        $medico = $user->medico()->with([
+            'especialidades',
+            'disponibilidades'
+        ])->first();
+        
+        if (!$medico) {
+            abort(403, 'Acceso denegado. Solo los médicos pueden ver esta información.');
+        }
+        
+        return view('medico.informacion', [
+            'user' => $user,
+            'medico' => $medico,
+            'especialidades' => $medico->especialidades,
+            'disponibilidades' => $medico->disponibilidades
+        ]);
+    }
 }

@@ -46,26 +46,12 @@
                     @enderror
                 </div>
 
-                @if (Route::has('password.request'))
-                    <a href="{{ route('password.request') }}"
-                        class="block text-sm text-blue-500 hover:underline text-center mb-4">
-                        ¿Olvidaste tu contraseña?
-                    </a>
-                @endif
-
                 <div class="flex justify-center">
                     <button type="submit"
                         class="w-full py-3 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition duration-300">
                         Iniciar sesión
                     </button>
                 </div>
-
-                @if (Route::has('register'))
-                    <p class="mt-4 text-center text-sm">
-                        ¿No tienes cuenta?
-                        <a href="{{ route('register') }}" class="text-blue-500 hover:underline">Regístrate</a>
-                    </p>
-                @endif
             </form>
         </div>
     </div>

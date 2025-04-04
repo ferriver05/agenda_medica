@@ -116,12 +116,10 @@ class UserController extends Controller
                 'numero_sala' => 'required|string|max:255|unique:medicos',
                 'especialidades' => 'required|array|min:1',
                 'especialidades.*' => 'exists:especialidades,id',
-                'dia_semana' => 'required|array|min:1',
-                'dia_semana.*' => 'integer|between:0,6',
-                'hora_inicio' => 'required|array|min:1',
-                'hora_inicio.*' => 'date_format:H:i',
-                'hora_fin' => 'required|array|min:1',
-                'hora_fin.*' => 'date_format:H:i|after:hora_inicio.*'
+                'disponibilidades' => 'required|array|min:1',
+                'disponibilidades.*.dia_semana' => 'required|integer|between:0,6',
+                'disponibilidades.*.hora_inicio' => 'required|date_format:H:i',
+                'disponibilidades.*.hora_fin' => 'required|date_format:H:i|after:disponibilidades.*.hora_inicio'
             ]);
     
             if ($medicoValidator->fails()) {
@@ -133,11 +131,7 @@ class UserController extends Controller
     
             // Validación adicional de disponibilidades
             try {
-                $this->validateAvailability([
-                    'dia_semana' => $request->dia_semana,
-                    'hora_inicio' => $request->hora_inicio,
-                    'hora_fin' => $request->hora_fin
-                ]);
+                $this->validateAvailability($request->disponibilidades);
             } catch (ValidationException $e) {
                 return redirect()
                     ->route('dba.usuarios.create')
@@ -172,12 +166,12 @@ class UserController extends Controller
                 $medico->especialidades()->attach($request->especialidades);
     
                 // Crear disponibilidades
-                foreach ($request->dia_semana as $index => $dia) {
+                foreach ($request->disponibilidades as $disponibilidad) {
                     Disponibilidad::create([
                         'medico_id' => $medico->id,
-                        'dia_semana' => $dia,
-                        'hora_inicio' => $request->hora_inicio[$index],
-                        'hora_fin' => $request->hora_fin[$index],
+                        'dia_semana' => $disponibilidad['dia_semana'],
+                        'hora_inicio' => $disponibilidad['hora_inicio'],
+                        'hora_fin' => $disponibilidad['hora_fin'],
                     ]);
                 }
     
@@ -492,7 +486,7 @@ class UserController extends Controller
         // Verificar que disponibilidades es un array
         if (!is_array($disponibilidades)) {
             throw ValidationException::withMessages([
-                'disponibilidades' => 'Formato de disponibilidades inválido'
+                'Formato de disponibilidades inválido'
             ]);
         }
     
@@ -502,19 +496,19 @@ class UserController extends Controller
         foreach ($disponibilidades as $index => $disp) {
             if (!isset($disp['dia_semana'])) {
                 throw ValidationException::withMessages([
-                    "disponibilidades.$index.dia_semana" => 'El día de la semana es requerido'
+                    'El día de la semana es requerido'
                 ]);
             }
             
             if (!isset($disp['hora_inicio'])) {
                 throw ValidationException::withMessages([
-                    "disponibilidades.$index.hora_inicio" => 'La hora de inicio es requerida'
+                    'La hora de inicio es requerida'
                 ]);
             }
             
             if (!isset($disp['hora_fin'])) {
                 throw ValidationException::withMessages([
-                    "disponibilidades.$index.hora_fin" => 'La hora de fin es requerida'
+                    'La hora de fin es requerida'
                 ]);
             }
             
@@ -537,15 +531,14 @@ class UserController extends Controller
                 if (!$this->validateTimeFormat($disp['hora_inicio']) || 
                     !$this->validateTimeFormat($disp['hora_fin'])) {
                     throw ValidationException::withMessages([
-                        "disponibilidades.{$disp['index']}.hora_inicio" => 'Las horas deben terminar en :00 o :30',
-                        "disponibilidades.{$disp['index']}.hora_fin" => 'Las horas deben terminar en :00 o :30'
+                        'Las horas deben terminar en :00 o :30',
                     ]);
                 }
     
                 // Validar que hora_fin > hora_inicio
                 if ($disp['hora_fin'] <= $disp['hora_inicio']) {
                     throw ValidationException::withMessages([
-                        "disponibilidades.{$disp['index']}.hora_fin" => "La hora final debe ser mayor que la hora inicial"
+                        "La hora final debe ser mayor que la hora inicial"
                     ]);
                 }
     
@@ -556,8 +549,7 @@ class UserController extends Controller
                     if ($disp['hora_fin'] > $nextDisp['hora_inicio']) {
                         $diaNombre = $diasSemana[$diaNum];
                         throw ValidationException::withMessages([
-                            "disponibilidades.{$disp['index']}.hora_fin" => "Superposición en $diaNombre: {$disp['hora_inicio']}-{$disp['hora_fin']} con {$nextDisp['hora_inicio']}-{$nextDisp['hora_fin']}",
-                            "disponibilidades.{$nextDisp['index']}.hora_inicio" => "Superposición en $diaNombre: {$disp['hora_inicio']}-{$disp['hora_fin']} con {$nextDisp['hora_inicio']}-{$nextDisp['hora_fin']}"
+                            "Superposición en horarios.",        
                         ]);
                     }
                 }

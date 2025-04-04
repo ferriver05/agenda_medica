@@ -290,9 +290,8 @@
                             <div class="disponibilidad mb-4">
                                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                     <div>
-                                        <label for="dia_semana" class="block text-sm font-medium text-gray-700">Día de la
-                                            semana</label>
-                                        <select name="dia_semana[]"
+                                        <label for="dia_semana" class="block text-sm font-medium text-gray-700">Día de la semana</label>
+                                        <select name="disponibilidades[0][dia_semana]"
                                             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                                             <option value="0">Domingo</option>
                                             <option value="1">Lunes</option>
@@ -304,15 +303,13 @@
                                         </select>
                                     </div>
                                     <div>
-                                        <label for="hora_inicio" class="block text-sm font-medium text-gray-700">Hora de
-                                            inicio</label>
-                                        <input type="time" name="hora_inicio[]"
+                                        <label for="hora_inicio" class="block text-sm font-medium text-gray-700">Hora de inicio</label>
+                                        <input type="time" name="disponibilidades[0][hora_inicio]" step="1800"
                                             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                                     </div>
                                     <div>
-                                        <label for="hora_fin" class="block text-sm font-medium text-gray-700">Hora de
-                                            fin</label>
-                                        <input type="time" name="hora_fin[]"
+                                        <label for="hora_fin" class="block text-sm font-medium text-gray-700">Hora de fin</label>
+                                        <input type="time" name="disponibilidades[0][hora_fin]" step="1800"
                                             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                                     </div>
                                 </div>
@@ -386,40 +383,26 @@
                 return true;
             };
 
-            // Validar todos los inputs de tiempo al cambiar
-            const setupTimeValidation = (container) => {
-                container.querySelectorAll('input[type="time"]').forEach(input => {
-                    input.addEventListener('change', function() {
-                        validateTimeFormat(this);
-                    });
-                });
-            };
-
             if (addButton && disponibilidades) {
                 const originalDisponibilidad = disponibilidades.querySelector('.disponibilidad');
 
-                // Configurar validación inicial para los campos existentes
-                setupTimeValidation(disponibilidades);
-
                 addButton.addEventListener('click', function() {
                     const newDisponibilidad = originalDisponibilidad.cloneNode(true);
+                    const newIndex = document.querySelectorAll('.disponibilidad').length;
 
                     // Limpiar valores del nuevo elemento
                     newDisponibilidad.querySelectorAll('input').forEach(input => input.value = '');
                     newDisponibilidad.querySelector('select').selectedIndex = 0;
 
-                    // Actualizar índices
-                    const newIndex = document.querySelectorAll('.disponibilidad').length;
+                    // Actualizar nombres de los campos con el nuevo índice
                     newDisponibilidad.querySelectorAll('[name]').forEach(el => {
-                        const name = el.getAttribute('name');
-                        el.setAttribute('name', name.replace(/\[\d+\]/, `[${newIndex}]`));
+                        const oldName = el.getAttribute('name');
+                        const newName = oldName.replace(/\[\d+\]/, `[${newIndex}]`);
+                        el.setAttribute('name', newName);
                     });
 
                     // Agregar al contenedor
                     disponibilidades.appendChild(newDisponibilidad);
-
-                    // Configurar validación para los nuevos campos
-                    setupTimeValidation(newDisponibilidad);
                 });
 
                 disponibilidades.addEventListener('click', function(event) {
@@ -430,9 +413,9 @@
                             // Reindexar elementos restantes
                             document.querySelectorAll('.disponibilidad').forEach((disp, index) => {
                                 disp.querySelectorAll('[name]').forEach(el => {
-                                    const name = el.getAttribute('name');
-                                    el.setAttribute('name', name.replace(/\[\d+\]/,
-                                        `[${index}]`));
+                                    const oldName = el.getAttribute('name');
+                                    const newName = oldName.replace(/\[\d+\]/, `[${index}]`);
+                                    el.setAttribute('name', newName);
                                 });
                             });
                         }
@@ -441,7 +424,7 @@
             }
 
             // Validación adicional al enviar el formulario
-            document.querySelector('form').addEventListener('submit', function(e) {
+            document.querySelector('form')?.addEventListener('submit', function(e) {
                 let isValid = true;
 
                 // Validar todos los campos de tiempo

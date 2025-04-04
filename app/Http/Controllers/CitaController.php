@@ -303,10 +303,9 @@ class CitaController extends Controller
             ->with('success', 'La cita ha sido marcada como completada correctamente.');
     }
 
-    public function mostrarFormularioReservaMedico(Request $request)
+    public function mostrarFormularioReservaMedico(Request $request, $dni = null)
     {
         $especialidades = auth()->user()->medico->especialidades;
-        $dni = $request->input('dni');
         
         return view('medico.citas.reservar', [
             'especialidades' => $especialidades,
