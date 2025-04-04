@@ -8,6 +8,7 @@
                     <a href="{{ route('medico.dashboard') }}">
                         <img src="{{ asset('img/doclogo.png') }}" alt="Logo" class="h-9 w-auto">
                     </a>
+                    <a href="{{ route('medico.dashboard') }}" class="ms-2 text-white text-lg font-semibold hidden sm:inline">MediSync</a>
                 </div>
 
                 <!-- Navigation Links -->
