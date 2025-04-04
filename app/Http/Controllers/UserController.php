@@ -324,26 +324,26 @@ class UserController extends Controller
     
     protected function updateMedicoData(Request $request, User $usuario)
     {
-        $medicoData = $request->validate([
-            'numero_licencia' => 'required|string|max:50|unique:medicos,numero_licencia,'.$usuario->medico->id,
-            'numero_sala' => 'required|string|max:20|unique:medicos,numero_sala,'.$usuario->medico->id,
-            'especialidades' => 'required|array|min:1',
-            'especialidades.*' => 'exists:especialidades,id',
-            'disponibilidades' => 'required|array|min:1',
-            'disponibilidades.*.dia_semana' => 'required|integer|between:0,6',
-            'disponibilidades.*.hora_inicio' => 'required|date_format:H:i',
-            'disponibilidades.*.hora_fin' => 'required|date_format:H:i|after:disponibilidades.*.hora_inicio'
-        ]);
-
-        $validator = \Validator::make([], []); // Crear validador vacío
-
         try {
-            $this->validateAvailability($medicoData['disponibilidades']);
+            $medicoData = $request->validate([
+                'numero_licencia' => 'required|string|max:50|unique:medicos,numero_licencia,'.$usuario->medico->id,
+                'numero_sala' => 'required|string|max:20|unique:medicos,numero_sala,'.$usuario->medico->id,
+                'especialidades' => 'required|array|min:1',
+                'especialidades.*' => 'exists:especialidades,id',
+                'disponibilidades' => 'required|array|min:1',
+                'disponibilidades.*.dia_semana' => 'required|integer|between:0,6',
+                'disponibilidades.*.hora_inicio' => 'required|date_format:H:i',
+                'disponibilidades.*.hora_fin' => 'required|date_format:H:i|after:disponibilidades.*.hora_inicio'
+            ]);
+
+            $this->validateAvailability($request->disponibilidades);
         } catch (ValidationException $e) {
+            \Log::error('Error de validación (etapa temprana)', ['errors' => $e->errors()]);
             return redirect()
                 ->route('dba.usuarios.edit', $usuario)
                 ->withErrors($e->validator)
-                ->withInput();
+                ->withInput()
+                ->throwResponse();
         }
     
         try {
