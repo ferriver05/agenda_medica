@@ -341,7 +341,6 @@
 @section('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Mostrar/ocultar campos según rol
             const rolSelect = document.getElementById('rol');
             const camposPaciente = document.getElementById('camposPaciente');
             const camposMedico = document.getElementById('camposMedico');
@@ -362,11 +361,9 @@
             rolSelect.addEventListener('change', mostrarCampos);
             mostrarCampos();
 
-            // Gestión de disponibilidades
             const disponibilidades = document.getElementById('disponibilidades');
             const addButton = document.getElementById('add-disponibilidad');
 
-            // Función para validar formato de hora (hh:00 o hh:30)
             const validateTimeFormat = (timeInput) => {
                 if (!timeInput.value) return true;
 
@@ -390,18 +387,15 @@
                     const newDisponibilidad = originalDisponibilidad.cloneNode(true);
                     const newIndex = document.querySelectorAll('.disponibilidad').length;
 
-                    // Limpiar valores del nuevo elemento
                     newDisponibilidad.querySelectorAll('input').forEach(input => input.value = '');
                     newDisponibilidad.querySelector('select').selectedIndex = 0;
 
-                    // Actualizar nombres de los campos con el nuevo índice
                     newDisponibilidad.querySelectorAll('[name]').forEach(el => {
                         const oldName = el.getAttribute('name');
                         const newName = oldName.replace(/\[\d+\]/, `[${newIndex}]`);
                         el.setAttribute('name', newName);
                     });
 
-                    // Agregar al contenedor
                     disponibilidades.appendChild(newDisponibilidad);
                 });
 
@@ -410,7 +404,6 @@
                         if (document.querySelectorAll('.disponibilidad').length > 1) {
                             event.target.closest('.disponibilidad').remove();
 
-                            // Reindexar elementos restantes
                             document.querySelectorAll('.disponibilidad').forEach((disp, index) => {
                                 disp.querySelectorAll('[name]').forEach(el => {
                                     const oldName = el.getAttribute('name');
@@ -423,11 +416,9 @@
                 });
             }
 
-            // Validación adicional al enviar el formulario
             document.querySelector('form')?.addEventListener('submit', function(e) {
                 let isValid = true;
 
-                // Validar todos los campos de tiempo
                 document.querySelectorAll('input[type="time"]').forEach(input => {
                     if (!validateTimeFormat(input)) {
                         isValid = false;

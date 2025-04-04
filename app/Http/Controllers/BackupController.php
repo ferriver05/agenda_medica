@@ -21,30 +21,25 @@ class BackupController extends Controller
             $backupName = 'backup_'.date('Y-m-d_His').'.sql';
             $backupPath = storage_path('app/backups/'.$backupName);
     
-            // Crear directorio si no existe
             if (!file_exists(storage_path('app/backups'))) {
                 mkdir(storage_path('app/backups'), 0755, true);
             }
     
-            // Conexión PDO
             $pdo = new \PDO(
                 'mysql:host='.config('database.connections.mysql.host').';dbname='.$database,
                 config('database.connections.mysql.username'),
                 config('database.connections.mysql.password')
             );
     
-            // Obtener todas las tablas
             $tables = $pdo->query('SHOW TABLES')->fetchAll(\PDO::FETCH_COLUMN);
     
             $output = '';
             foreach ($tables as $table) {
-                // Estructura de la tabla
                 $output .= "-- Estructura para tabla `$table`\n";
                 $output .= "DROP TABLE IF EXISTS `$table`;\n";
                 $createTable = $pdo->query("SHOW CREATE TABLE `$table`")->fetch();
                 $output .= $createTable['Create Table'].";\n\n";
     
-                // Datos de la tabla
                 $rows = $pdo->query("SELECT * FROM `$table`");
                 $output .= "-- Datos para la tabla `$table`\n";
                 
@@ -58,7 +53,6 @@ class BackupController extends Controller
                 $output .= "\n";
             }
     
-            // Guardar archivo
             file_put_contents($backupPath, $output);
     
             if (!file_exists($backupPath) || filesize($backupPath) === 0) {
@@ -76,15 +70,12 @@ class BackupController extends Controller
     public function listBackups()
     {
         try {
-            // Configuración personalizada para coincidir con tu createBackup()
-            $backupDisk = Storage::disk('local'); // Usamos el disco local directamente
-            $backupFolder = 'backups'; // Carpeta donde se guardan tus backups PDO
-            $fileExtension = 'sql'; // Extensión de tus archivos
+            $backupDisk = Storage::disk('local');
+            $backupFolder = 'backups';
+            $fileExtension = 'sql';
             
-            // Obtener todos los archivos de backup
             $backupFiles = $backupDisk->files($backupFolder);
-            
-            // Filtrar por extensión y crear colección
+
             $backups = collect($backupFiles)
                 ->filter(function ($file) use ($fileExtension) {
                     return Str::endsWith($file, '.'.$fileExtension);
@@ -101,7 +92,7 @@ class BackupController extends Controller
                         'age' => Carbon::createFromTimestamp($lastModified)->diffForHumans()
                     ];
                 })
-                ->sortByDesc('date'); // Ordenar por fecha más reciente
+                ->sortByDesc('date');
             
             return view('dba.backups', ['backups' => $backups]);
             
@@ -116,7 +107,6 @@ class BackupController extends Controller
             $backupDisk = Storage::disk('local');
             $filePath = 'backups/' . $file;
             
-            // Verificación adicional de que es un archivo de backup válido
             if (!Str::startsWith($file, 'backup_') || !Str::endsWith($file, '.sql')) {
                 abort(400, 'Archivo no parece ser un backup válido');
             }
@@ -137,7 +127,7 @@ class BackupController extends Controller
     {
         try {
             $backupDisk = Storage::disk('local');
-            $filePath = 'backups/' . $file; // Misma ruta que createBackup
+            $filePath = 'backups/' . $file;
             
             if (!$backupDisk->exists($filePath)) {
                 abort(404);

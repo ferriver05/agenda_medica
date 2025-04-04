@@ -7,7 +7,6 @@
 
             <h1 class="text-2xl font-bold mb-4">Reservar Cita</h1>
 
-            <!-- Mostrar errores generales -->
             @if ($errors->any())
                 <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
                     <ul>
@@ -18,7 +17,6 @@
                 </div>
             @endif
 
-            <!-- Mostrar mensajes flash -->
             @if (session('error'))
                 <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
                     {{ session('error') }}
@@ -31,8 +29,6 @@
                 </div>
             @endif
 
-            <!-- Resto del formulario... -->
-            <!-- Selección de especialidad -->
             <div class="mb-4">
                 <label for="especialidad" class="block text-gray-700 text-sm font-bold mb-2">Especialidad</label>
                 <select name="especialidad_id" id="especialidad"
@@ -64,7 +60,6 @@
                 </select>
             </div>
 
-            <!-- Selección de fecha -->
             <div class="mb-4">
                 <label for="fecha" class="block text-gray-700 text-sm font-bold mb-2">Fecha</label>
                 <input type="date" name="fecha" id="fecha"
@@ -72,7 +67,6 @@
                     required>
             </div>
 
-            <!-- Selección de hora -->
             <div class="mb-4">
                 <label for="hora" class="block text-gray-700 text-sm font-bold mb-2">Hora</label>
                 <select name="hora_inicio" id="hora"
@@ -82,7 +76,6 @@
                 </select>
             </div>
 
-            <!-- Razon del paciente -->
             <div class="mb-4">
                 <label for="razon_paciente" class="block text-gray-700 text-sm font-bold mb-2">Razón de la cita</label>
                 <textarea name="razon_paciente" id="razon_paciente"
@@ -91,13 +84,11 @@
             </div>
 
             <div class="flex items-center justify-start space-x-4">
-                <!-- Botón Cancelar -->
                 <button type="button" onclick="window.history.back()" 
                     class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
                     Regresar
                 </button>
             
-                <!-- Botón Confirmar Reserva -->
                 <button type="submit" onclick="return confirm('¿Estás seguro de que quieres reservar esta cita?')" 
                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                     Reservar

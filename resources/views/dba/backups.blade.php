@@ -2,7 +2,6 @@
 
 @section('content')
     <div class="container mx-auto px-4 py-8 max-w-5xl">
-        <!-- Encabezado y botón de crear -->
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-2xl font-bold text-gray-800">Gestión de Backups</h1>
             <form action="{{ route('backups.create') }}" method="POST">
@@ -19,7 +18,6 @@
             </form>
         </div>
 
-        <!-- Notificaciones -->
         @if (session('success'))
             <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
                 {{ session('success') }}
@@ -32,7 +30,6 @@
             </div>
         @endif
 
-        <!-- Listado de backups -->
         <div class="bg-white shadow-md rounded-lg overflow-hidden">
             <div class="px-6 py-4 bg-gray-50 border-b flex justify-between items-center">
                 <h3 class="text-lg font-medium">Backups Existentes</h3>

@@ -1,7 +1,6 @@
 <div class="bg-white rounded-lg shadow-md p-6 mb-6">
     <h2 class="text-xl font-semibold mb-4">Información Médica</h2>
 
-    <!-- Información básica del médico -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <div class="space-y-4">
             <div>
@@ -22,7 +21,6 @@
             </div>
         </div>
 
-        <!-- Especialidades -->
         <div>
             <p class="font-medium text-gray-600 mb-2">Especialidades:</p>
             @if ($medico->especialidades->count() > 0)
@@ -41,7 +39,6 @@
         </div>
     </div>
 
-    <!-- Horario de atención (disponibilidades) -->
     <h3 class="text-lg font-semibold mb-4">Horario de Atención</h3>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

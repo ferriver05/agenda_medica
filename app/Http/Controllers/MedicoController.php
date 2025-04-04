@@ -15,10 +15,8 @@ class MedicoController extends Controller
 
     public function pacientes()
     {
-        // Obtener el médico autenticado
         $medico = Auth::user()->medico;
         
-        // Obtener pacientes que han tenido citas con este médico
         $pacientes = Paciente::whereHas('citas', function($query) use ($medico) {
             $query->where('medico_id', $medico->id);
         })

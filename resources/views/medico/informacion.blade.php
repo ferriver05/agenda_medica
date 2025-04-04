@@ -155,7 +155,6 @@
                 @endif
             </div>
 
-            <!-- Botón de regreso -->
             <div class="flex justify-end">
                 <a href="{{ route('medico.dashboard') }}" 
                    class="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition duration-200 flex items-center">

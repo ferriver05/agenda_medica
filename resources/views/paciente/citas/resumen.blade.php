@@ -25,7 +25,6 @@
             </div>
         </div>
 
-        <!-- Sección de Citas Confirmadas -->
         <section class="mb-12">
             <h2 class="text-2xl font-semibold text-gray-800 mb-6">Próximas Citas</h2>
             <div id="citasConfirmadas" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -97,7 +96,6 @@
             </div>
         </section>
 
-        <!-- Sección de Citas Pendientes -->
         <section class="mb-12">
             <h2 class="text-2xl font-semibold text-gray-800 mb-6">Citas en Pendientes de Confirmación</h2>
             <div id="citasPendientes" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -160,7 +158,6 @@
             </div>
         </section>
 
-        <!-- Sección de Citas Pasadas -->
         <section class="mb-12">
             <h2 class="text-2xl font-semibold text-gray-800 mb-6">Historial de Citas</h2>
             <div id="citasPasadas" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

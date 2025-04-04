@@ -29,7 +29,6 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        // Validación básica para todos los usuarios
         $request->validate([
             'dni' => 'required|string|max:20|unique:users',
             'name' => 'required|string|max:255',
@@ -43,7 +42,6 @@ class UserController extends Controller
         ]);
     
         if ($request->rol === 'Paciente') {
-            // Validación específica para pacientes
             $request->validate([
                 'tipo_sangre' => 'nullable|in:A+,A-,B+,B-,O+,O-,AB+,AB-',
                 'seguro_medico' => 'nullable|string|max:255',
@@ -61,8 +59,7 @@ class UserController extends Controller
     
             try {
                 DB::beginTransaction();
-    
-                // Crear usuario paciente
+
                 $user = User::create([
                     'dni' => $request->dni,
                     'name' => $request->name,
@@ -74,8 +71,7 @@ class UserController extends Controller
                     'rol' => $request->rol,
                     'password' => bcrypt($request->password),
                 ]);
-    
-                // Crear registro de paciente
+
                 $paciente = Paciente::create([
                     'user_id' => $user->id,
                     'tipo_sangre' => $request->tipo_sangre,
@@ -84,8 +80,7 @@ class UserController extends Controller
                     'contacto_emergencia' => $request->contacto_emergencia,
                     'telefono_emergencia' => $request->telefono_emergencia,
                 ]);
-    
-                // Crear historial médico
+
                 Historial::create([
                     'paciente_id' => $paciente->id,
                     'enfermedades_cronicas' => $request->enfermedades_cronicas,
@@ -110,7 +105,6 @@ class UserController extends Controller
             }
     
         } elseif ($request->rol === 'Medico') {
-            // Validación básica para médicos
             $medicoValidator = \Validator::make($request->all(), [
                 'numero_licencia' => 'required|string|max:255|unique:medicos',
                 'numero_sala' => 'required|string|max:255|unique:medicos',
@@ -128,8 +122,7 @@ class UserController extends Controller
                     ->withErrors($medicoValidator)
                     ->withInput();
             }
-    
-            // Validación adicional de disponibilidades
+
             try {
                 $this->validateAvailability($request->disponibilidades);
             } catch (ValidationException $e) {
@@ -141,8 +134,7 @@ class UserController extends Controller
     
             try {
                 DB::beginTransaction();
-    
-                // Crear usuario médico
+
                 $user = User::create([
                     'dni' => $request->dni,
                     'name' => $request->name,
@@ -154,18 +146,15 @@ class UserController extends Controller
                     'rol' => $request->rol,
                     'password' => bcrypt($request->password),
                 ]);
-    
-                // Crear registro de médico
+
                 $medico = Medico::create([
                     'user_id' => $user->id,
                     'numero_licencia' => $request->numero_licencia,
                     'numero_sala' => $request->numero_sala,
                 ]);
-    
-                // Asignar especialidades
+
                 $medico->especialidades()->attach($request->especialidades);
-    
-                // Crear disponibilidades
+
                 foreach ($request->disponibilidades as $disponibilidad) {
                     Disponibilidad::create([
                         'medico_id' => $medico->id,
@@ -225,7 +214,6 @@ class UserController extends Controller
 
     public function edit(User $usuario)
     {
-        // Cargar relaciones según el rol
         $usuario->load([
             'medico.especialidades',
             'medico.disponibilidades' => function($query) {
@@ -233,8 +221,7 @@ class UserController extends Controller
             },
             'paciente.historial'
         ]);
-        
-        // Si es médico, preparamos datos para el formulario
+
         if ($usuario->rol === 'Medico') {
             $diasSemana = [
                 0 => 'Domingo',
@@ -265,7 +252,6 @@ class UserController extends Controller
 
     public function update(Request $request, User $usuario)
     {
-        // Validación para datos comunes a todos los usuarios
         $userData = $request->validate([
             'name' => 'required|string|max:255',
             'dni' => 'required|string|max:20|unique:users,dni,'.$usuario->id,
@@ -277,18 +263,15 @@ class UserController extends Controller
             'password' => 'nullable|min:8|confirmed',
             'activo' => 'boolean'
         ]);
-        
-        // Actualizar contraseña solo si se proporcionó una nueva
+ 
         if (!empty($userData['password'])) {
             $userData['password'] = Hash::make($userData['password']);
         } else {
             unset($userData['password']);
         }
-        
-        // Actualizar datos básicos del usuario
+
         $usuario->update($userData);
-        
-        // Actualizar datos específicos según el rol
+
         switch ($usuario->rol) {
             case 'Paciente':
                 $this->updatePacienteData($request, $usuario);
@@ -341,7 +324,6 @@ class UserController extends Controller
     
     protected function updateMedicoData(Request $request, User $usuario)
     {
-        // Validar datos básicos primero
         $medicoData = $request->validate([
             'numero_licencia' => 'required|string|max:50|unique:medicos,numero_licencia,'.$usuario->medico->id,
             'numero_sala' => 'required|string|max:20|unique:medicos,numero_sala,'.$usuario->medico->id,
@@ -353,11 +335,9 @@ class UserController extends Controller
             'disponibilidades.*.hora_fin' => 'required|date_format:H:i|after:disponibilidades.*.hora_inicio'
         ]);
 
-        // Validación adicional personalizada
         $validator = \Validator::make([], []); // Crear validador vacío
 
         try {
-            // Validar disponibilidades
             $this->validateAvailability($medicoData['disponibilidades']);
         } catch (ValidationException $e) {
             return redirect()
@@ -368,8 +348,7 @@ class UserController extends Controller
     
         try {
             DB::beginTransaction();
-    
-            // 1. Manejo de especialidades (código existente)
+
             $currentEspecialidades = $usuario->medico->especialidades->pluck('id')->toArray();
             $newEspecialidades = $medicoData['especialidades'];
             $removedEspecialidades = array_diff($currentEspecialidades, $newEspecialidades);
@@ -380,8 +359,7 @@ class UserController extends Controller
             ]);
     
             $usuario->medico->especialidades()->sync($newEspecialidades);
-    
-            // Cancelar citas de especialidades eliminadas
+
             if (!empty($removedEspecialidades)) {
                 DB::table('citas')
                     ->where('medico_id', $usuario->medico->id)
@@ -393,8 +371,7 @@ class UserController extends Controller
                         'notas_medico' => 'Cita cancelada: el médico ya no atiende esta especialidad'
                     ]);
             }
-    
-            // 2. Preparar nuevos horarios de disponibilidad
+
             $newAvailability = collect($medicoData['disponibilidades'])->map(function($item) {
                 return [
                     'dia_semana' => $item['dia_semana'],
@@ -402,8 +379,7 @@ class UserController extends Controller
                     'hora_fin' => $item['hora_fin']
                 ];
             });
-    
-            // 3. Cancelar citas que quedan fuera de la nueva disponibilidad
+
             $pendingAppointments = DB::table('citas')
                 ->where('medico_id', $usuario->medico->id)
                 ->where('estado', 'pendiente')
@@ -411,10 +387,9 @@ class UserController extends Controller
     
             foreach ($pendingAppointments as $appointment) {
                 $appointmentDate = \Carbon\Carbon::parse($appointment->fecha);
-                $appointmentDayOfWeek = $appointmentDate->dayOfWeek; // 0 (domingo) a 6 (sábado)
+                $appointmentDayOfWeek = $appointmentDate->dayOfWeek;
                 $appointmentTime = \Carbon\Carbon::parse($appointment->hora_inicio)->format('H:i:s');
-    
-                // Verificar si la cita está en un día no disponible
+
                 $dayAvailable = $newAvailability->contains('dia_semana', $appointmentDayOfWeek);
     
                 if (!$dayAvailable) {
@@ -427,8 +402,7 @@ class UserController extends Controller
                         ]);
                     continue;
                 }
-    
-                // Verificar si la cita está fuera del horario disponible
+
                 $timeAvailable = false;
                 $daySlots = $newAvailability->where('dia_semana', $appointmentDayOfWeek);
     
@@ -453,8 +427,7 @@ class UserController extends Controller
                         ]);
                 }
             }
-    
-            // 4. Actualizar disponibilidades
+
             $usuario->medico->disponibilidades()->delete();
             foreach ($medicoData['disponibilidades'] as $disponibilidad) {
                 $usuario->medico->disponibilidades()->create([
@@ -482,15 +455,13 @@ class UserController extends Controller
     protected function validateAvailability($disponibilidades)
     {
         $diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
-        
-        // Verificar que disponibilidades es un array
+
         if (!is_array($disponibilidades)) {
             throw ValidationException::withMessages([
                 'Formato de disponibilidades inválido'
             ]);
         }
-    
-        // Reorganizar los datos en una estructura más manejable
+
         $horariosPorDia = [];
         
         foreach ($disponibilidades as $index => $disp) {
@@ -521,13 +492,11 @@ class UserController extends Controller
         }
     
         foreach ($horariosPorDia as $diaNum => $disponibilidadesDia) {
-            // Ordenar por hora de inicio
             usort($disponibilidadesDia, function($a, $b) {
                 return strcmp($a['hora_inicio'], $b['hora_inicio']);
             });
     
             foreach ($disponibilidadesDia as $i => $disp) {
-                // Validar formato de hora
                 if (!$this->validateTimeFormat($disp['hora_inicio']) || 
                     !$this->validateTimeFormat($disp['hora_fin'])) {
                     throw ValidationException::withMessages([
@@ -535,14 +504,12 @@ class UserController extends Controller
                     ]);
                 }
     
-                // Validar que hora_fin > hora_inicio
                 if ($disp['hora_fin'] <= $disp['hora_inicio']) {
                     throw ValidationException::withMessages([
                         "La hora final debe ser mayor que la hora inicial"
                     ]);
                 }
     
-                // Validar superposición con la siguiente disponibilidad
                 if (isset($disponibilidadesDia[$i + 1])) {
                     $nextDisp = $disponibilidadesDia[$i + 1];
                     
@@ -561,7 +528,6 @@ class UserController extends Controller
     
     protected function validateTimeFormat($time)
     {
-        // Validar que sea hh:00 o hh:30
         $minutes = date('i', strtotime($time));
         return $minutes === '00' || $minutes === '30';
     }

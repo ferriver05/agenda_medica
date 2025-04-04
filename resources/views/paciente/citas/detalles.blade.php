@@ -43,7 +43,6 @@
                 @endif
             </div>
 
-            <!-- Botones de acción -->
             <div class="mt-6 flex flex-wrap gap-4">
                 @if (in_array($cita->estado, ['pendiente', 'confirmada']))
                     <form action="{{ route('citas.cancelar', $cita->id) }}" method="POST">
@@ -56,7 +55,6 @@
                     </form>
                 @endif
 
-                <!-- Botón para regresar -->
                 <a href="{{ route('paciente.citas.resumen') }}"
                     class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                     Regresar

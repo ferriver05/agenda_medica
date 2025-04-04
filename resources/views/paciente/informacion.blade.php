@@ -3,16 +3,13 @@
 @section('content')
 <div class="container mx-auto mt-6 p-4 max-w-5xl">
     <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-        <!-- Header con degradado -->
         <div class="bg-gradient-to-r from-blue-500 to-blue-600 p-6 text-white">
             <h1 class="text-3xl font-bold text-center">Mi Información Médica</h1>
             <p class="text-center text-blue-100 mt-2">Datos personales y registro de salud</p>
         </div>
 
         <div class="p-6 md:p-8">
-            <!-- Sección de Datos Personales y Médicos -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
-                <!-- Tarjeta Datos Personales -->
                 <div class="rounded-lg p-6 shadow-sm border border-gray-100">
                     <div class="flex items-center mb-4">
                         <div class="bg-blue-100 p-2 rounded-full mr-3">
@@ -61,7 +58,6 @@
                     </div>
                 </div>
 
-                <!-- Tarjeta Datos Médicos -->
                 <div class="rounded-lg p-6 shadow-sm border border-gray-100">
                     <div class="flex items-center mb-4">
                         <div class="bg-green-100 p-2 rounded-full mr-3">
@@ -101,7 +97,6 @@
                 </div>
             </div>
 
-            <!-- Sección de Historial Médico -->
             <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-6 mb-6">
                 <div class="flex items-center mb-4">
                     <div class="bg-purple-100 p-2 rounded-full mr-3">
@@ -187,7 +182,6 @@
                 @endif
             </div>
 
-            <!-- Botón de regreso -->
             <div class="flex justify-end">
                 <a href="{{ route('paciente.dashboard') }}" 
                    class="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition duration-200 flex items-center">

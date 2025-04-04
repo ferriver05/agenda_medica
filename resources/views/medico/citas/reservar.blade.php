@@ -104,36 +104,31 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
-            // Precargar DNI si existe
             @if(isset($dni_precargado) && $dni_precargado)
                 $('#dni').val('{{ $dni_precargado }}');
                 buscarPaciente('{{ $dni_precargado }}');
             @endif
 
-            // Precargar datos si hubo error
             @if(old('dni'))
                 $('#dni').val('{{ old("dni") }}');
                 buscarPaciente('{{ old("dni") }}');
             @endif
 
-            // Buscar paciente al ingresar DNI
             $('#dni').on('input', function() {
                 var dni = $(this).val();
                 buscarPaciente(dni);
             });
 
-            // Función mejorada para buscar paciente
             function buscarPaciente(dni) {
                 if (dni.length >= 1) {
                     $.get('/buscar-paciente-por-dni/' + dni, function(data) {
                         if (data) {
                             $('#nombre_paciente').val(data.name);
-                            // Solo cargar horas si ya hay fecha seleccionada
                             if ($('#fecha').val()) {
                                 cargarHorasDisponibles(dni, $('#fecha').val());
                             }
                         } else {
-                            resetSelectHora(); // Resetear hora si no hay paciente
+                            resetSelectHora();
                         }
                     }).fail(function() {
                         resetSelectHora();
@@ -143,9 +138,8 @@
                 }
             }
 
-            // Cambio en el evento de fecha - RESETEO DE HORA
             $('#fecha').change(function() {
-                resetSelectHora(); // Resetear siempre al cambiar fecha
+                resetSelectHora();
                 
                 var dni = $('#dni').val();
                 var fecha = $(this).val();
@@ -155,7 +149,6 @@
                 }
             });
 
-            // Función para cargar horas disponibles
             function cargarHorasDisponibles(dni, fecha) {
                 $.get('/horas-disponibles-medico/' + dni + '/' + fecha, function(data) {
                     $('#hora').empty().append('<option value="">Seleccione una hora</option>');
@@ -172,7 +165,6 @@
                 });
             }
 
-            // Función específica para resetear solo el select de hora
             function resetSelectHora() {
                 $('#hora')
                     .empty()

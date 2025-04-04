@@ -14,7 +14,6 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
-        // Completar citas confirmadas pasadas
         $schedule->call(function () {
             Cita::where('estado', 'confirmada')
                 ->whereDate('fecha', '<', now()->toDateString())
@@ -28,7 +27,6 @@ class Kernel extends ConsoleKernel
                 ]);
         })->dailyAt('23:59');
     
-        // Cancelar citas pendientes no confirmadas un día antes
         $schedule->call(function () {
             Cita::where('estado', 'pendiente')
                 ->whereDate('fecha', now()->addDay()->toDateString())

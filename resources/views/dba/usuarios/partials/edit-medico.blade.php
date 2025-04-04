@@ -98,8 +98,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         const disponibilidades = document.getElementById('disponibilidades');
         const addButton = document.getElementById('add-disponibilidad');
-    
-        // Función para validar formato de hora (hh:00 o hh:30)
+
         const validateTimeFormat = (timeInput) => {
             if (!timeInput.value) return true;
             
@@ -115,8 +114,7 @@
             timeInput.setCustomValidity('');
             return true;
         };
-    
-        // Validar todos los inputs de tiempo al cambiar
+
         const setupTimeValidation = (container) => {
             container.querySelectorAll('input[type="time"]').forEach(input => {
                 input.addEventListener('change', function() {
@@ -128,27 +126,22 @@
         if (addButton && disponibilidades) {
             const originalDisponibilidad = disponibilidades.querySelector('.disponibilidad');
             
-            // Configurar validación inicial para los campos existentes
             setupTimeValidation(disponibilidades);
     
             addButton.addEventListener('click', function() {
                 const newDisponibilidad = originalDisponibilidad.cloneNode(true);
-                
-                // Limpiar valores del nuevo elemento
+
                 newDisponibilidad.querySelectorAll('input').forEach(input => input.value = '');
                 newDisponibilidad.querySelector('select').selectedIndex = 0;
-                
-                // Actualizar índices
+
                 const newIndex = document.querySelectorAll('.disponibilidad').length;
                 newDisponibilidad.querySelectorAll('[name]').forEach(el => {
                     const name = el.getAttribute('name');
                     el.setAttribute('name', name.replace(/\[\d+\]/, `[${newIndex}]`));
                 });
-                
-                // Agregar al contenedor
+
                 disponibilidades.appendChild(newDisponibilidad);
-                
-                // Configurar validación para los nuevos campos
+
                 setupTimeValidation(newDisponibilidad);
             });
     
@@ -156,8 +149,7 @@
                 if (event.target.classList.contains('remove-disponibilidad')) {
                     if (document.querySelectorAll('.disponibilidad').length > 1) {
                         event.target.closest('.disponibilidad').remove();
-                        
-                        // Reindexar elementos restantes
+
                         document.querySelectorAll('.disponibilidad').forEach((disp, index) => {
                             disp.querySelectorAll('[name]').forEach(el => {
                                 const name = el.getAttribute('name');
@@ -167,12 +159,10 @@
                     }
                 }
             });
-    
-            // Validación adicional al enviar el formulario
+
             document.querySelector('form').addEventListener('submit', function(e) {
                 let isValid = true;
                 
-                // Validar todos los campos de tiempo
                 document.querySelectorAll('input[type="time"]').forEach(input => {
                     if (!validateTimeFormat(input)) {
                         isValid = false;
