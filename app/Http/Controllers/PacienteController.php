@@ -7,11 +7,6 @@ use Illuminate\Support\Facades\Auth;
 
 class PacienteController extends Controller
 {
-    public function dashboard()
-    {
-        return view('paciente.dashboard');
-    }
-
     public function mostrarInformacion()
     {
         $user = Auth::user();

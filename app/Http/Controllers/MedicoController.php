@@ -8,11 +8,6 @@ use App\Models\Paciente;
 
 class MedicoController extends Controller
 {
-    public function dashboard()
-    {
-        return view('medico.dashboard');
-    }
-
     public function pacientes()
     {
         $medico = Auth::user()->medico;

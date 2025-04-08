@@ -4,10 +4,10 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PacienteController;
 use App\Http\Controllers\MedicoController;
-use App\Http\Controllers\DBAController;
 use App\Http\Controllers\CitaController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BackupController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Response;
 
@@ -75,7 +75,7 @@ Route::get('/prescripciones/{filename}', function ($filename) {
 // ============= RUTAS DBA ============= //
 Route::middleware(['auth', 'rol:DBA'])->group(function () {
     // Dashboard
-    Route::get('/dba/dashboard', [DBAController::class, 'dashboard'])->name('dba.dashboard');
+    Route::get('/dba/dashboard', [DashboardController::class, 'dbaDashboard'])->name('dba.dashboard');
     
     // Usuarios
     Route::prefix('/dba/usuarios')->group(function () {
@@ -99,7 +99,7 @@ Route::middleware(['auth', 'rol:DBA'])->group(function () {
 // ============= RUTAS PACIENTE ============= //
 Route::middleware(['auth', 'rol:Paciente'])->group(function () {
     // Dashboard
-    Route::get('/paciente/dashboard', [PacienteController::class, 'dashboard'])->name('paciente.dashboard');
+    Route::get('/paciente/dashboard', [DashboardController::class, 'pacienteDashboard'])->name('paciente.dashboard');
     
     // Perfil
     Route::get('/paciente/perfil', [PacienteController::class, 'mostrarInformacion'])->name('paciente.informacion');
@@ -125,7 +125,7 @@ Route::middleware(['auth', 'rol:Paciente'])->group(function () {
 // ============= RUTAS MÉDICO ============= //
 Route::middleware(['auth', 'rol:Medico'])->group(function () {
     // Dashboard
-    Route::get('/medico/dashboard', [MedicoController::class, 'dashboard'])->name('medico.dashboard');
+    Route::get('/medico/dashboard', [DashboardController::class, 'medicoDashboard'])->name('medico.dashboard');
     
     // Perfil
     Route::get('/medico/perfil', [MedicoController::class, 'mostrarInformacion'])->name('medico.informacion');
